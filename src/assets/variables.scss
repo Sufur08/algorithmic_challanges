@@ -1,0 +1,8 @@
+
+
+@function inRange($value, $min, $max) {
+    @return min($max, max($value, $min))
+}
+
+
+

@@ -1,47 +1,48 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script setup lang="ts">
+
+
+
+
+
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <div class="app__container">
+        <header>
+            <h1>Header</h1>
+        </header>
+
+        <main>
+            <RouterView/>
+        </main>
     </div>
-  </header>
 
-  <main>
-    <TheWelcome />
-  </main>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
+<style lang="scss">
+    @import "./assets/variables.scss";
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+    .app__container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+        & header {
+            position: fixed;
+            height: inRange(12dvh, 34px, 100px);
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
+    }
+
+
+
+
 </style>
