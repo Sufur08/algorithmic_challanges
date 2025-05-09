@@ -1,15 +1,17 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import {createRouter, createWebHashHistory} from "vue-router";
-import MainHome from "@/components/MainHome.vue";
-import CoinProblem from "@/components/problems/CoinProblem.vue";
+import MainHome from "@/components/sites/MainHome.vue";
+import CoinProblem from "@/components/sites/problems/CoinProblem.vue";
 
 const routes = [
     { path: "/", component: MainHome },
     { path: "/coin-problem", component: CoinProblem }
 ]
+
+
 
 
 

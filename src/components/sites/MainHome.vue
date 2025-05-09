@@ -1,12 +1,13 @@
 <script setup>
 
+import ProblemPreview from "@/components/ProblemPreview.vue";
 </script>
 
 <template>
 
     <div class="mainHome__container">
-
         <router-link to="/coin-problem">bla</router-link>
+        <ProblemPreview/>
     </div>
 
 </template>

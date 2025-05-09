@@ -38,6 +38,13 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
+
+            & h1 {
+                text-shadow:
+                    0 0 26px black,
+                    0 0 36px black;
+            }
+
         }
 
     }
