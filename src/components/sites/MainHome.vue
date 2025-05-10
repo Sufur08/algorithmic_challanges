@@ -6,8 +6,7 @@ import ProblemPreview from "@/components/ProblemPreview.vue";
 <template>
 
     <div class="mainHome__container">
-        <router-link to="/coin-problem">bla</router-link>
-        <ProblemPreview img="/previewImgs/coins.webp" title="The Coins"/>
+        <ProblemPreview img="./previewImgs/coins.webp" title="The Coins" link-to="/coin-problem"/>
     </div>
 
 </template>

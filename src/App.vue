@@ -30,7 +30,12 @@
         min-height: 100dvh;
 
 
-        & header {
+        & > main {
+            margin-top: inRange(12dvh, 34px, 100px);
+        }
+
+
+        & > header {
             position: fixed;
             height: inRange(12dvh, 34px, 100px);
             width: 100%;
@@ -39,7 +44,7 @@
             justify-content: center;
             align-items: center;
 
-            & h1 {
+            & > h1 {
                 text-shadow:
                     0 0 26px black,
                     0 0 36px black;

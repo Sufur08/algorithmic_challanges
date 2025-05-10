@@ -7,6 +7,7 @@ import {useWindowSize} from "@vueuse/core";
 const props = defineProps({
     img: String,
     title: String,
+    linkTo: String,
 })
 
 
@@ -24,7 +25,7 @@ const width = computed(() => {
 <template>
 
     <div class="problem-preview__container">
-        <div class="problem-preview">
+        <router-link :to="linkTo" class="problem-preview">
 
             <div class="problem-preview__inner-shadow"/>
 
@@ -33,13 +34,15 @@ const width = computed(() => {
             
             <img :src="img" alt="img of coins with different values"/>
 
-        </div>
+        </router-link>
     </div>
 
 
 </template>
 
 <style lang="scss">
+
+    @import "../assets/variables.scss";
 
     .problem-preview {
         &__container {
@@ -69,7 +72,7 @@ const width = computed(() => {
         justify-content: center;
         align-items: center;
         position: relative;
-        border: 8px solid #6f8f8f;
+        border: 8px solid $accent1;
 
         border-radius: calc(v-bind(width) * .12);
 
@@ -112,9 +115,10 @@ const width = computed(() => {
             text-align: center;
         }
         & > h2 {
+            top: 28%;
             position: absolute;
             z-index: 10;
-            font-size: 2rem;
+            font-size: 2.4rem; // make dependent on vbind width
             font-weight: 900;
             text-align: center;
         }
