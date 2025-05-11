@@ -1,61 +1,99 @@
 <script setup lang="ts">
 
 import {onMounted, ref} from "vue";
+import playground from 'kotlin-playground'
+
+interface Arg {
+    name: string,
+    kotlinType: string,
+    kotlinTypeParser: (it: string) => string,
+    value: string,
+}
 
 const props = defineProps({
-
+    maxHeight: {
+        type: Number,
+        default: window.innerHeight * 0.8
+    },
+    args: {
+        type: Array<Arg>,
+        default: () => []
+    },
+    sampleCode: {
+        type: String,
+        default: "    // your code here"
+    },
+    prescriptedCode: String
 })
 
 
-const defaultStr = ref(`
-fun main(args: Array\<\String\>\) {
+
+
+const startingCode = `
+fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
 //sampleStart
-    println("Hello, World!")
-    println(args.joinToString(", "))
+    ${props.args.map((value, index) => (
+        `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
+    ))}
+    ${props.sampleCode}
 //sampleEnd
 }
-`)
-let playground = null;
-let kotlinContainer = ref(null);
+`
+const codeContent = ref(startingCode)
 
-
-
-const mainArgs = ref(["arg1", "arg2", "arg3"]);
+let instance = null;
 
 onMounted(() => {
-    KotlinPlayground('.kotlin-container-for-ext', {
-        onChange: (code) => { defaultStr.value = code }
-    })
+    playground('code', {
+        onChange: (code) => {
+            codeContent.value = code;
+        },
+        getInstance: (it) => {
+            console.log(it);
+            instance = it;
+        },
+        callback: () => {
+            instance.codemirror.on("change", () => {
+                changeSize();
+            });
+            changeSize();
+        }
+    });
+
+
 });
 
 
-function onLoadExtScript() {
-
+function changeSize() {
+    //const doc = instance.codemirror.doc;//doc.lineCount();
+    const height = instance.codemirror.doc.height;
+    //const mul = instance.codemirror.defaultTextHeight();
+    //console.log(height);
+    instance.codemirror.setSize(null, Math.max(50, Math.min(height + 25, props.maxHeight)))
 }
+
 
 
 </script>
 
 <template>
 
-    <div @click=""> ewatthhb dv</div>
+    <div @click="changeSize"> ewatthhb dv</div>
 
-    <div class="own-kotlin__container">
-
-        <div ref="kotlinContainer"
-             class="kotlin-container-for-ext"
-             theme="darcula"
-             :args="mainArgs"
-        >
-            <code
-                class="kotlin-code"
-            >
-                {{ defaultStr }}
-            </code>
-        </div>
+    <div class="kotlin-code__container">
+        <code
+            class="kotlin-code"
+            theme="darcula"
+            match-brackets="true"
+            :args="props.args.map(({value}) => { return value }).join(' ')"
+        ><!-- get theme by storage -->
+            <!-- don't work:
+            data-shorter-height="100"
+            data-output-height="100"
+            -->
+            {{ codeContent }}
+        </code>
     </div>
-
-
 
 
 
@@ -65,15 +103,12 @@ function onLoadExtScript() {
 
 <style lang="scss">
 
-.own-kotlin {
-    &__container {
-        height: 40px;
-        width: 100%;
 
-        & code {
-            height: 60px;
-            width: 100%;
-        }
+
+
+.kotlin-code {
+    &__container {
+        visibility: visible;
     }
 }
 
