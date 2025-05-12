@@ -12,6 +12,7 @@
   "dependencies": {
     "@vueuse/components": "^13.1.0",
     "@vueuse/core": "^13.1.0",
+    "kotlin": "^1.9.25",
     "kotlin-playground": "^1.30.0",
     "pinia": "^3.0.2",
     "sass": "^1.87.0",

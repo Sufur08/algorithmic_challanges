@@ -9,12 +9,12 @@
 
 <template>
 
-    <div class="app__container">
+    <div class="app__container my-scroll-container">
         <header>
             <h1>Header</h1>
         </header>
 
-        <main>
+        <main class="">
             <RouterView/>
         </main>
     </div>
@@ -24,14 +24,26 @@
 <style lang="scss">
     @import "./assets/variables.scss";
 
+    .my-scroll-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .my-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .my-scroll-container::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 4px;
+    }
+
     .app__container {
         display: flex;
         flex-direction: column;
-        min-height: 100dvh;
+        overflow: auto;
 
 
         & > main {
             margin-top: inRange(12dvh, 34px, 100px);
+
         }
 
 

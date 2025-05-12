@@ -1,17 +1,21 @@
 <script setup lang="ts">
 
 import KotlinIntegration from "@/components/KotlinIntegration.vue";
+import {computed, ref} from "vue";
 
 
+const arg = ref(100);
 
-const args = [
-    {
-        name: "arg1",
-        kotlinType: "Int",
-        kotlinTypeParser: (it: string) => `${it}.toInt()`,
-        value: "100"
-    }
-]
+const args = computed(() => {
+    return [
+        {
+            name: "arg1",
+            kotlinType: "Int",
+            kotlinTypeParser: (it: string) => `${it}.toInt()`,
+            value: arg.value.toString()
+        }
+    ]
+})
 
 
 </script>
@@ -24,7 +28,10 @@ const args = [
 
         </div>
 
-        <kotlin-integration :args="args" />
+
+        <input type="number" v-model="arg">
+
+        <kotlin-integration class="coin-problem__kotlin" :args="args" />
 
 
 
@@ -36,10 +43,13 @@ const args = [
 <style lang="scss">
 .coin-problem {
 
-    width: 100dvw;
+    padding-inline: 1.4dvw;
 
     &__explanation {
         height: 26dvh;
+    }
+
+    &__kotlin {
     }
 
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 
-import {onMounted, ref} from "vue";
-import playground from 'kotlin-playground'
+import {onMounted, Ref, ref, watch} from "vue";
+import playground from 'kotlin-playground';
+
+const theme: Ref<string> = ref("darcula");
 
 interface Arg {
     name: string,
@@ -30,23 +32,59 @@ const props = defineProps({
 
 
 const startingCode = `
+fun foo(arg: String): String = arg + " das war arg"
 fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
 //sampleStart
     ${props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
     ))}
+    println(foo(arg1.toString()))
     ${props.sampleCode}
 //sampleEnd
 }
 `
 const codeContent = ref(startingCode)
+const containerRef = ref(null);
 
 let instance = null;
+
+let compiledMain: Ref<(args: Array<string>) => any> = ref(null);
 
 onMounted(() => {
     playground('code', {
         onChange: (code) => {
             codeContent.value = code;
+        },
+        getJsCode: (code: string) => {
+
+            if (code) {
+                compiledMain.value = (args: Array<string>) => {
+                    // Die ursprüngliche main-Aufrufzeile finden
+                    const mainCallRegex = /main\(\["[^"]*"\]\);/;
+
+                    // Bereite die Parameter vor - String-Array in Kotlin-Format
+                    const paramsStr = JSON.stringify(args);
+                    const mainCall = `main(${paramsStr});`;
+
+                    // Ersetze den ursprünglichen main()-Aufruf durch unseren
+                    const modifiedCode = code.replace(mainCallRegex, mainCall);
+
+                    // Führe den modifizierten Code aus und erfasse den Rückgabewert
+                    try {
+                        //const execFunc = new Function(returnValueCode);
+                        return eval(modifiedCode);
+                    } catch (error) {
+                        console.log("Failed running kotlin code as javascript: ", error);
+                        return error; // Den Fehler weiterwerfen, damit der Aufrufer ihn behandeln kann
+                    }
+                }
+            }
+
+
+            //console.log(code);
+            //console.log(eval(code));
+            //compiledMain.value(["30"])
+         //   console.log("return: " + runWithParams(code, ["20"]))
         },
         getInstance: (it) => {
             console.log(it);
@@ -56,12 +94,23 @@ onMounted(() => {
             instance.codemirror.on("change", () => {
                 changeSize();
             });
+//            instance.state.jsLibs = ["/kotlin.js"];
             changeSize();
         }
     });
 
-
 });
+
+watch(
+    () => props.args.map(({value}) => { return value }),
+    (newArgs) => {
+        instance.state.args = newArgs.join(' ')
+        if (compiledMain.value) {
+            setOutput(compiledMain.value(newArgs))
+        }
+    }
+
+)
 
 
 function changeSize() {
@@ -72,21 +121,35 @@ function changeSize() {
     instance.codemirror.setSize(null, Math.max(50, Math.min(height + 25, props.maxHeight)))
 }
 
+function setOutput(output: any) {
+    const elem = containerRef.value.querySelector(".code-output");
+    if (elem) {
+        typeof output === "string"
+            ? elem.innerHTML = `<span class="standard-output ${theme.value}">${output}</span>`
+            : elem.innerHTML = `<span class=\"error-output\">${output}</span>`;
+    }
+}
 
+
+// future idea: compile to js and run faster with different args
+
+// future idea: i read importSuggestions in instance
 
 </script>
 
 <template>
 
-    <div @click="changeSize"> ewatthhb dv</div>
-
-    <div class="kotlin-code__container">
+    <div class="kotlin-code__container" ref="containerRef">
         <code
+
             class="kotlin-code"
             theme="darcula"
             match-brackets="true"
+            data-target-platform="js"
+            data-version="1.9.25"
             :args="props.args.map(({value}) => { return value }).join(' ')"
         ><!-- get theme by storage -->
+            <!-- reactivity of args is not is redundant here -->
             <!-- don't work:
             data-shorter-height="100"
             data-output-height="100"
@@ -108,6 +171,7 @@ function changeSize() {
 
 .kotlin-code {
     &__container {
+        width: 100%;
         visibility: visible;
     }
 }
