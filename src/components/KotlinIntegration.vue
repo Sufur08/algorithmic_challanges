@@ -23,7 +23,10 @@ const props = defineProps({
     },
     sampleCode: {
         type: String,
-        default: "    // your code here"
+        default: `
+    // your code here
+    // print the result
+    println(args.joinToString())`
     },
     prescriptedCode: String
 })
@@ -32,13 +35,11 @@ const props = defineProps({
 
 
 const startingCode = `
-fun foo(arg: String): String = arg + " das war arg"
 fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
 //sampleStart
     ${props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
     ))}
-    println(foo(arg1.toString()))
     ${props.sampleCode}
 //sampleEnd
 }
@@ -107,6 +108,8 @@ watch(
         instance.state.args = newArgs.join(' ')
         if (compiledMain.value) {
             setOutput(compiledMain.value(newArgs))
+        } else {
+            instance.execute();
         }
     }
 
@@ -122,12 +125,15 @@ function changeSize() {
 }
 
 function setOutput(output: any) {
-    const elem = containerRef.value.querySelector(".code-output");
-    if (elem) {
-        typeof output === "string"
-            ? elem.innerHTML = `<span class="standard-output ${theme.value}">${output}</span>`
-            : elem.innerHTML = `<span class=\"error-output\">${output}</span>`;
+    if (typeof output === "string")
+    {
+        instance.state.output = output
+        instance.state.exception = null
+    } else {
+            instance.state.output = ""
+            instance.state.exception = output
     }
+    instance.update({ openConsole: true })
 }
 
 
