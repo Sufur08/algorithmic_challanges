@@ -26,6 +26,17 @@ body {
 a, a:active, a:visited {
     color: aliceblue;
 }
+input, textarea {
+    font-family: inherit;
+    color: inherit;
+    &:focus-visible {
+        outline: none;
+    }
+}
+* {
+    box-sizing: border-box;
+}
+
 b.extra {
     font-weight: 900;
 }

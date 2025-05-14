@@ -39,6 +39,7 @@
         display: flex;
         flex-direction: column;
         overflow: auto;
+        width: 100dvw;
 
 
         & > main {
@@ -50,7 +51,7 @@
         & > header {
             position: fixed;
             height: inRange(12dvh, 34px, 100px);
-            width: 100%;
+            width: 100dvw;
             display: flex;
             flex-direction: row;
             justify-content: center;

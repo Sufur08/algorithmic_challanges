@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import {onMounted, Ref, ref, watch} from "vue";
+import {computed, onMounted, Ref, ref, watch} from "vue";
 import playground from 'kotlin-playground';
+import {useWindowSize} from "@vueuse/core";
 
 const theme: Ref<string> = ref("darcula");
 
@@ -16,6 +17,10 @@ const props = defineProps({
     maxHeight: {
         type: Number,
         default: window.innerHeight * 0.8
+    },
+    horizontalExpend: {
+        type: String,
+        default: "calc(min(120%, 100dvw) - 100%)"
     },
     args: {
         type: Array<Arg>,
@@ -46,6 +51,10 @@ fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescr
 `
 const codeContent = ref(startingCode)
 const containerRef = ref(null);
+const expandedWidth = computed(() => { return `calc(100% + ${props.horizontalExpend})` })
+
+const expanded = ref(false);
+const { width } = useWindowSize();
 
 let instance = null;
 
@@ -145,23 +154,38 @@ function setOutput(output: any) {
 
 <template>
 
-    <div class="kotlin-code__container" ref="containerRef">
-        <code
+    <div class="kotlin-code__positioner">
+        <div
+            class="kotlin-code__container"
+            :class="{'--expanded': (props.horizontalExpend && expanded) || width <= 500}"
+            ref="containerRef"
+        >
+            <div
+                class="kotlin-code__expander__container"
+                v-if="props.horizontalExpend && width > 500"
+            >
+            <span
+                class="kotlin-code__expander__button"
+                @click="() => expanded = !expanded"
+            >{{ expanded ? "collapse" : "expand" }} horizontally</span>
+            </div>
+            <code
 
-            class="kotlin-code"
-            theme="darcula"
-            match-brackets="true"
-            data-target-platform="js"
-            data-version="1.9.25"
-            :args="props.args.map(({value}) => { return value }).join(' ')"
-        ><!-- get theme by storage -->
-            <!-- reactivity of args is not is redundant here -->
-            <!-- don't work:
-            data-shorter-height="100"
-            data-output-height="100"
-            -->
-            {{ codeContent }}
-        </code>
+                class="kotlin-code"
+                theme="darcula"
+                match-brackets="true"
+                data-target-platform="js"
+                data-version="1.9.25"
+                :args="props.args.map(({value}) => { return value }).join(' ')"
+            ><!-- get theme by storage -->
+                <!-- reactivity of args is not is redundant here -->
+                <!-- don't work:
+                data-shorter-height="100"
+                data-output-height="100"
+                -->
+                {{ codeContent }}
+            </code>
+        </div>
     </div>
 
 
@@ -176,9 +200,31 @@ function setOutput(output: any) {
 
 
 .kotlin-code {
+    &__positioner {
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
     &__container {
+        transition: width 0.2s ease-in-out;
         width: 100%;
-        visibility: visible;
+        &.--expanded {
+            width: v-bind(expandedWidth);
+        }
+    }
+
+    &__expander {
+        &__container {
+            display: flex;
+        }
+
+        &__button {
+            font-size: 10px;
+            color: #afb1b3;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     }
 }
 
