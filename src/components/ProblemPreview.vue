@@ -13,7 +13,7 @@ const props = defineProps({
 
 const windowSize = useWindowSize({ includeScrollbar: false });
 const width = computed(() => {
-    const minSize = windowSize.width.value * 0.06 + 270;
+    const minSize = windowSize.width.value * 0.05 + 270;
     const objectsCount = Math.floor(windowSize.width.value / minSize);
     return (windowSize.width.value / Math.max(objectsCount, 1)) + "px";
 })

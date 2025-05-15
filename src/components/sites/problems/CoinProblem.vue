@@ -40,13 +40,14 @@ console.log(optional.value)
 
 
         <ArgInput
-            :fields="[formField, {type: 'email', value: ref(2), description: 'bla bla'}]"
+            :fields="[formField]"
             :additional-args="optional"
         />
         <div style="height: 30px"/>
 
         <kotlin-integration
             :args="args"
+            :unnamed-args="optional.map(({value}) => value)"
         />
 
 

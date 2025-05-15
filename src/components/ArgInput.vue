@@ -91,18 +91,21 @@ function removeArg(index: number) {
                     rows="1"
                 />
             </span>
-            <CloseX
-                class="arg-input__remove-arg"
-                @click="removeArg(index)"
-                :color="optionalArgsExtra[index].hovered == true ? '#598080' : '#3a6262'"
-                @mouseenter="optionalArgsExtra[index].hovered = true"
-                @mouseleave="optionalArgsExtra[index].hovered = false"
-            />
-            <input
-                class="arg-input__input"
-                type="text"
-                v-model="arg.value"
-            >
+            <span class="arg-input__input-container">
+                <CloseX
+                    class="arg-input__remove-arg"
+                    @click="removeArg(index)"
+                    :color="optionalArgsExtra[index].hovered == true ? '#598080' : '#3a6262'"
+                    @mouseenter="optionalArgsExtra[index].hovered = true"
+                    @mouseleave="optionalArgsExtra[index].hovered = false"
+                />
+                <input
+                    class="arg-input__input"
+                    type="text"
+                    placeholder="string"
+                    v-model="arg.value"
+                >
+            </span>
         </span>
         <div
             class="arg-input__add-arg arg-input"
@@ -132,7 +135,9 @@ function removeArg(index: number) {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    gap: 3px;
+    @media (max-width: 500px) {
+        gap: 5px;
+    }
 
     padding: 10px;
     border-radius: 5px;
@@ -155,7 +160,21 @@ function removeArg(index: number) {
         padding: 5px;
         & .arg-input__input {
             margin: 5px;
-            margin-inline-start: 0;
+            @media (min-width: 500.001px) {
+                margin-inline-start: 0;
+            }
+            @media (max-width: 500px) {
+                margin-block-start: 0;
+            }
+
+            &-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 3px;
+                align-self: stretch;
+                padding-inline-start: 3px;
+            }
         }
     }
     &__arg-name {
@@ -165,7 +184,12 @@ function removeArg(index: number) {
             display: inline-grid;
 
             padding: 5px;
+            padding-block-end: 0;
             border-radius: 5px;
+
+            @media (min-width: 500.001px) {
+                padding-block-start: 0;
+            }
 
             &::after {
                 position: absolute;
@@ -184,18 +208,21 @@ function removeArg(index: number) {
 
             & .arg-input__arg-name-input,
             & .arg-input__arg-name-mirror {
-                display: inline;
                 grid-area: 1 / 1 /-1 /-1;
             }
         }
         &-input {
             z-index: 1;
             border: none;
+            padding: 0;
             background: transparent;
             resize: none;
             overflow: hidden;
             display: flex;
             align-items: center;
+            @media (max-width: 500px) {
+                text-align: center;
+            }
         }
         &-mirror {
             visibility: hidden;
@@ -237,10 +264,9 @@ function removeArg(index: number) {
     &__input {
         @media (max-width: 500px) {
             margin-inline-start: 0;
-            width: calc(100% - 10px);
+            width: 100%;
         }
 
-        align-self: stretch;
         width: 150px;
         margin-inline-start: auto;
 
@@ -267,6 +293,9 @@ function removeArg(index: number) {
         }
         &:focus-visible {
             background-color: lighten(darkslategray, 6%);
+        }
+        &::-webkit-input-placeholder {
+            color: #c3c3c3;
         }
     }
 }

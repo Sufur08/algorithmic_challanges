@@ -6,34 +6,30 @@ import {useWindowSize} from "@vueuse/core";
 
 const theme: Ref<string> = ref("darcula");
 
-interface Arg {
+type Arg = {
     name: string,
     kotlinType: string,
     kotlinTypeParser: (it: string) => string,
     value: string,
 }
 
-const props = defineProps({
-    maxHeight: {
-        type: Number,
-        default: window.innerHeight * 0.8
-    },
-    horizontalExpend: {
-        type: String,
-        default: "calc(min(120%, 100dvw) - 100%)"
-    },
-    args: {
-        type: Array<Arg>,
-        default: () => []
-    },
-    sampleCode: {
-        type: String,
-        default: `
+const props = withDefaults(defineProps<{
+    maxHeight?: number,
+    horizontalExpend?: string,
+    args?: Array<Arg>,
+    unnamedArgs?: Array<string>,
+    sampleCode?: string,
+    prescriptedCode?: string
+}>(), {
+    maxHeight: window.innerHeight * 0.8,
+    horizontalExpend: "calc(min(120%, 100dvw) - 100%)",
+    args: () => [],
+    unnamedArgs: () => [],
+    sampleCode: `
     // your code here
     // print the result
-    println(args.joinToString())`
-    },
-    prescriptedCode: String
+    println(args.joinToString())`,
+    prescriptedCode: "",
 })
 
 
@@ -44,7 +40,7 @@ fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescr
 //sampleStart
     ${props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
-    ))}
+    )).join("\n\t")}
     ${props.sampleCode}
 //sampleEnd
 }
@@ -62,7 +58,7 @@ let compiledMain: Ref<(args: Array<string>) => any> = ref(null);
 
 onMounted(() => {
     playground('code', {
-        onChange: (code) => {
+        onChange: (code: string) => {
             codeContent.value = code;
         },
         getJsCode: (code: string) => {
@@ -70,7 +66,7 @@ onMounted(() => {
             if (code) {
                 compiledMain.value = (args: Array<string>) => {
                     // Die ursprüngliche main-Aufrufzeile finden
-                    const mainCallRegex = /main\(\["[^"]*"\]\);/;
+                    const mainCallRegex = /main\(\["[^"]*"]\);/;
 
                     // Bereite die Parameter vor - String-Array in Kotlin-Format
                     const paramsStr = JSON.stringify(args);
@@ -112,7 +108,10 @@ onMounted(() => {
 });
 
 watch(
-    () => props.args.map(({value}) => { return value }),
+    () => {
+        const regular = props.args.map(({value}) => { return value })
+        return [...regular, ...props.unnamedArgs];
+    },
     (newArgs) => {
         instance.state.args = newArgs.join(' ')
         if (compiledMain.value) {

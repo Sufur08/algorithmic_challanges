@@ -9,7 +9,7 @@
 
 <template>
 
-    <div class="app__container my-scroll-container">
+    <div class="app__container">
         <header>
             <h1>Header</h1>
         </header>
@@ -24,21 +24,10 @@
 <style lang="scss">
     @import "./assets/variables.scss";
 
-    .my-scroll-container::-webkit-scrollbar {
-        width: 8px;
-    }
-    .my-scroll-container::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .my-scroll-container::-webkit-scrollbar-thumb {
-        background-color: rgba(0,0,0,0.3);
-        border-radius: 4px;
-    }
-
     .app__container {
         display: flex;
         flex-direction: column;
-        overflow: auto;
+        overflow-x: hidden;
         width: 100dvw;
 
 
