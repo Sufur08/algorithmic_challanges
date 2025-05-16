@@ -16,6 +16,7 @@ import ProblemPreview from "@/components/ProblemPreview.vue";
     .mainHome {
         &__container {
             padding-block-start: 200px;
+            overflow: visible;
         }
     }
 

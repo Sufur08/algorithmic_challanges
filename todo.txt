@@ -1,0 +1,7 @@
+
+
+
+switch theme (darcula, idea, normal)?
+reset code button (oben neben extend, weil das eh weggeht bei klein)
+
+save code?

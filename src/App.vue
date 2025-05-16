@@ -1,7 +1,9 @@
 <script setup lang="ts">
 
 
+import {useRouteSettings} from "@/storages";
 
+const state = useRouteSettings()
 
 
 
@@ -11,7 +13,7 @@
 
     <div class="app__container">
         <header>
-            <h1>Header</h1>
+            <h1>{{ state.header }}</h1>
         </header>
 
         <main class="">
@@ -29,6 +31,7 @@
         flex-direction: column;
         overflow-x: hidden;
         width: 100dvw;
+        min-height: 100dvh;
 
 
         & > main {

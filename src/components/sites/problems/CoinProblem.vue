@@ -1,9 +1,12 @@
 <script setup lang="ts">
 
 import KotlinIntegration from "@/components/KotlinIntegration.vue";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import ArgInput from "@/components/ArgInput.vue";
+import {useRouteSettings} from "@/storages";
 
+
+const pageState = useRouteSettings()
 
 const arg = ref(100);
 
@@ -26,6 +29,11 @@ const formField = {
 
 const optional = ref<{ name: string, value: string}[]>([])
 console.log(optional.value)
+
+
+onMounted(() => {
+    pageState.header = "The Coin Problem"
+})
 
 
 </script>
