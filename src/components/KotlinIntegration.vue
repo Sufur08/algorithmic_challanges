@@ -148,8 +148,8 @@ function setOutput(output: any) {
         instance.state.output = output
         instance.state.exception = null
     } else {
-            instance.state.output = ""
-            instance.state.exception = output
+        instance.state.output = ""
+        instance.state.exception = output
     }
     instance.update({ openConsole: true })
 }

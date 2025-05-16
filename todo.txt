@@ -3,5 +3,6 @@
 
 switch theme (darcula, idea, normal)?
 reset code button (oben neben extend, weil das eh weggeht bei klein)
+place curser at last column in end-aligned inputs, autofocus when adding
 
 save code?

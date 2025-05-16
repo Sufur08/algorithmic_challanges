@@ -49,7 +49,7 @@ function removeArg(index: number) {
 
     <div class="arg-input__container">
 
-        <h3>Configure your parameters: </h3>
+        <h3>Configure your Para&shy;meters: </h3>
 
 
         <div
@@ -248,6 +248,10 @@ function removeArg(index: number) {
         flex-direction: column;
         justify-content: space-between;
         gap: 6px;
+
+        & h3 {
+            margin-block-end: 10px;
+        }
 
     }
 

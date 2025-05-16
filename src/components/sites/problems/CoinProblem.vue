@@ -4,6 +4,7 @@ import KotlinIntegration from "@/components/KotlinIntegration.vue";
 import {computed, onMounted, ref} from "vue";
 import ArgInput from "@/components/ArgInput.vue";
 import {useRouteSettings} from "@/storages";
+import ProblemDescription from "@/components/ProblemDescription.vue";
 
 
 const pageState = useRouteSettings()
@@ -42,9 +43,21 @@ onMounted(() => {
 
     <div class="coin-problem">
 
-        <div class="coin-problem__explanation">
+        <ProblemDescription>
 
-        </div>
+            <p>
+                We are used to coins with the denominations 1, 2, 5, 10, 20 and 50 (ct or similar).
+                These values are intuitive because they match our decimal number system.
+                But are these mathe&shy;matically ideal, regarding the amount of coins needed to total a certain value? - Probably not.
+            </p>
+            <p class="problem-description__question">
+                So the question goes as follows: What is the most efficient set of denominations
+                in order to achieve the lowest average of needed coins for the values of 1..99.
+                Your function should be able to create this set in different lengths, given as parameter.
+            </p>
+
+
+        </ProblemDescription>
 
 
         <ArgInput
@@ -68,10 +81,16 @@ onMounted(() => {
 <style lang="scss">
 .coin-problem {
 
-    padding-inline: calc(2dvw + 10%);
+    padding-inline: 12%;
+    overflow: visible;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 
     &__explanation {
-        height: 26dvh;
+
+
     }
 
 
