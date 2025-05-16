@@ -48,6 +48,9 @@ input, textarea {
 }
 * {
     box-sizing: border-box;
+    .code-output::-webkit-scrollbar-track {
+        background: transparent;
+    }
 }
 
 b.extra {

@@ -49,6 +49,13 @@ const codeContent = ref(startingCode)
 const containerRef = ref(null);
 const expandedWidth = computed(() => { return `calc(100% + ${props.horizontalExpend})` })
 
+const allArgs = computed(() =>
+    [...props.args.map(({value}) => { return value }), ...props.unnamedArgs]
+)
+function replaceWhitespaces(list: string[]) {
+    return list.map(it => it.replace(/\s/g, '_'))
+}
+
 const expanded = ref(false);
 const { width } = useWindowSize();
 
@@ -66,7 +73,7 @@ onMounted(() => {
             if (code) {
                 compiledMain.value = (args: Array<string>) => {
                     // Die ursprüngliche main-Aufrufzeile finden
-                    const mainCallRegex = /main\(\["[^"]*"]\);/;
+                    const mainCallRegex = /main\(\[(?:"(?:\\.|[^"\\])*"(?:,\s*)?)*]\);/;
 
                     // Bereite die Parameter vor - String-Array in Kotlin-Format
                     const paramsStr = JSON.stringify(args);
@@ -102,25 +109,28 @@ onMounted(() => {
             });
 //            instance.state.jsLibs = ["/kotlin.js"];
             changeSize();
+            instance.state.args = replaceWhitespaces(allArgs.value).join(' ')
+            const oldOnUpdate = instance.onUpdate;
+            instance.onUpdate = (it)  => {
+                if (it.output && compiledMain.value && it.output != compiledMain.value(allArgs.value))
+                    setOutput(compiledMain.value(allArgs.value))
+                else oldOnUpdate(it);
+            }
         }
     });
 
 });
 
 watch(
-    () => {
-        const regular = props.args.map(({value}) => { return value })
-        return [...regular, ...props.unnamedArgs];
-    },
+    () => allArgs.value,
     (newArgs) => {
-        instance.state.args = newArgs.join(' ')
+        instance.state.args = replaceWhitespaces(newArgs).join(' ')
         if (compiledMain.value) {
             setOutput(compiledMain.value(newArgs))
         } else {
             instance.execute();
         }
     }
-
 )
 
 
@@ -175,7 +185,6 @@ function setOutput(output: any) {
                 match-brackets="true"
                 data-target-platform="js"
                 data-version="1.9.25"
-                :args="props.args.map(({value}) => { return value }).join(' ')"
             ><!-- get theme by storage -->
                 <!-- reactivity of args is not is redundant here -->
                 <!-- don't work:
@@ -210,6 +219,9 @@ function setOutput(output: any) {
         width: 100%;
         &.--expanded {
             width: v-bind(expandedWidth);
+        }
+        & .output {
+            overflow-wrap: break-word;
         }
     }
 

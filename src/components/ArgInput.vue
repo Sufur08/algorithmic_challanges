@@ -267,7 +267,8 @@ function removeArg(index: number) {
             width: 100%;
         }
 
-        width: 150px;
+        width: max(150px, 16dvw);
+        text-align: end;
         margin-inline-start: auto;
 
         padding-inline: 5px;
