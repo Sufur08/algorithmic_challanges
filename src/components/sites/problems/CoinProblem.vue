@@ -51,7 +51,7 @@ onMounted(() => {
                 But are these mathe&shy;matically ideal, regarding the amount of coins needed to total a certain value? - Probably not.
             </p>
             <p class="problem-description__question">
-                So the question goes as follows: What is the most efficient set of denominations
+                The question goes as follows: What is the most efficient set of denominations
                 in order to achieve the lowest average of needed coins for the values of 1..99.
                 Your function should be able to create this set in different lengths, given as parameter.
             </p>

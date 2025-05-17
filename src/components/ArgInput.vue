@@ -40,23 +40,19 @@ function removeArg(index: number) {
     })
 }
 
-
 </script>
 
 <template>
-
 
 
     <div class="arg-input__container">
 
         <h3>Configure your Para&shy;meters: </h3>
 
-
         <div
             class="arg-input"
             v-for="field in fields"
         >
-
             <span class="arg-input__description">
                 {{field.description}}
             </span>
@@ -67,8 +63,6 @@ function removeArg(index: number) {
                 :required="field.type != 'string'"
                 v-model="field.value.value"
             >
-
-
         </div>
 
         <span
@@ -115,11 +109,7 @@ function removeArg(index: number) {
             Add Argument
         </div>
 
-
     </div>
-
-
-
 
 
 </template>
@@ -128,9 +118,7 @@ function removeArg(index: number) {
 
 @import "../assets/variables";
 
-
 .arg-input {
-
 
     display: flex;
     flex-direction: row;
@@ -229,7 +217,6 @@ function removeArg(index: number) {
             overflow-wrap: anywhere;
         }
     }
-
 
 
     @media (max-width: 500px) {

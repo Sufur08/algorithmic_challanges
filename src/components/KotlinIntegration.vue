@@ -35,16 +35,15 @@ const props = withDefaults(defineProps<{
 
 
 
-const startingCode = `
-fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
+const startingCode =
+`fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
 //sampleStart
     ${props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
     )).join("\n\t")}
     ${props.sampleCode}
 //sampleEnd
-}
-`
+}`
 const codeContent = ref(startingCode)
 const containerRef = ref(null);
 const expandedWidth = computed(() => { return `calc(100% + ${props.horizontalExpend})` })
@@ -140,6 +139,7 @@ function changeSize() {
     //const mul = instance.codemirror.defaultTextHeight();
     //console.log(height);
     instance.codemirror.setSize(null, Math.max(50, Math.min(height + 25, props.maxHeight)))
+    //instance.codemirror.display.wrapper.style.maxHeight = `${props.maxHeight}px`
 }
 
 function setOutput(output: any) {
@@ -154,8 +154,43 @@ function setOutput(output: any) {
     instance.update({ openConsole: true })
 }
 
+function setCode(code: string) {
+    if (instance) {
+        if (instance.state.folded)
+        {
+            const split = code.split(/\/\/sampleStart\n|\/\/sampleEnd\n/g)
+            /*
+            const lines = (split.length > 1 ? split[1] : split[0]).split('\n')
+            let maxIndent = 0
+            lines.forEach(line => {
+                let indent = 0
+                for (let i = 0; i < line.length; i++) {
+                    if (line[i] == ' ') indent++
+                    else break
+                }
+                if (indent > maxIndent) maxIndent = indent
+            })
+            const trimmed = lines.map(line => line.slice(maxIndent)).join('\n')
 
-// future idea: compile to js and run faster with different args
+             */
+            // imagine just calling str.trimIndent() to do that (kotlin)
+            instance.codemirror.setValue(split.length > 1 ? split[1] : split[0])
+        }
+        else
+            instance.codemirror.setValue(code.replace(/\/\/sampleStart\n|\/\/sampleEnd\n/g, ''))
+        //instance.prefix = split[0]
+        //instance.suffix = split[2]
+//        instance.state.code = undefined
+        instance.update(instance.state)
+    }
+}
+
+function resetCode() {
+    console.log(instance.state)
+    setCode(startingCode)
+    console.log(instance.state)
+}
+
 
 // future idea: i read importSuggestions in instance
 
@@ -170,13 +205,21 @@ function setOutput(output: any) {
             ref="containerRef"
         >
             <div
-                class="kotlin-code__expander__container"
-                v-if="props.horizontalExpend && width > 500"
+                class="kotlin-code__options-container"
             >
-            <span
-                class="kotlin-code__expander__button"
-                @click="() => expanded = !expanded"
-            >{{ expanded ? "collapse" : "expand" }} horizontally</span>
+                <span
+                    class="kotlin-code__option kotlin-code__expander"
+                    v-if="props.horizontalExpend && width > 500"
+                    @click="() => expanded = !expanded"
+                >
+                    {{ expanded ? "collapse" : "expand" }} horizontally
+                </span>
+                <span
+                    class="kotlin-code__option kotlin-code__resetter"
+                    @click="resetCode"
+                >
+                    reset code
+                </span>
             </div>
             <code
 
@@ -186,11 +229,6 @@ function setOutput(output: any) {
                 data-target-platform="js"
                 data-version="1.9.25"
             ><!-- get theme by storage -->
-                <!-- reactivity of args is not is redundant here -->
-                <!-- don't work:
-                data-shorter-height="100"
-                data-output-height="100"
-                -->
                 {{ codeContent }}
             </code>
         </div>
@@ -225,12 +263,25 @@ function setOutput(output: any) {
         }
     }
 
-    &__expander {
-        &__container {
-            display: flex;
+    &__options-container {
+
+        display: flex;
+
+
+        & span{
+            &.kotlin-code__option {
+                font-size: 10px;
+                color: #afb1b3;
+                text-decoration: underline;
+                cursor: pointer;
+            }
+            &.kotlin-code__resetter {
+                color: #f86969;
+                margin-inline-start: auto;
+            }
         }
 
-        &__button {
+        &  {
             font-size: 10px;
             color: #afb1b3;
             text-decoration: underline;
