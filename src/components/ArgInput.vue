@@ -2,6 +2,7 @@
 
 import {ref, Ref} from "vue";
 import CloseX from "../../public/CloseX.vue";
+import {vFocus, vFocusEnd} from "../directives"
 
 type Field = {
     description: string,
@@ -61,6 +62,7 @@ function removeArg(index: number) {
                 class="arg-input__input"
                 :type="field.type"
                 :required="field.type != 'string'"
+                v-focus-end
                 v-model="field.value.value"
             >
         </div>
@@ -90,13 +92,15 @@ function removeArg(index: number) {
                     class="arg-input__remove-arg"
                     @click="removeArg(index)"
                     :color="optionalArgsExtra[index].hovered == true ? '#598080' : '#3a6262'"
-                    @mouseenter="optionalArgsExtra[index].hovered = true"
-                    @mouseleave="optionalArgsExtra[index].hovered = false"
+                    @mouseenter="() => { optionalArgsExtra[index].hovered = true }"
+                    @mouseleave="() => { optionalArgsExtra[index].hovered = false }"
                 />
                 <input
                     class="arg-input__input"
                     type="text"
                     placeholder="string"
+                    v-focus-end
+                    v-focus.select="true"
                     v-model="arg.value"
                 >
             </span>

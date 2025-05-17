@@ -159,36 +159,16 @@ function setCode(code: string) {
         if (instance.state.folded)
         {
             const split = code.split(/\/\/sampleStart\n|\/\/sampleEnd\n/g)
-            /*
-            const lines = (split.length > 1 ? split[1] : split[0]).split('\n')
-            let maxIndent = 0
-            lines.forEach(line => {
-                let indent = 0
-                for (let i = 0; i < line.length; i++) {
-                    if (line[i] == ' ') indent++
-                    else break
-                }
-                if (indent > maxIndent) maxIndent = indent
-            })
-            const trimmed = lines.map(line => line.slice(maxIndent)).join('\n')
-
-             */
-            // imagine just calling str.trimIndent() to do that (kotlin)
             instance.codemirror.setValue(split.length > 1 ? split[1] : split[0])
         }
         else
             instance.codemirror.setValue(code.replace(/\/\/sampleStart\n|\/\/sampleEnd\n/g, ''))
-        //instance.prefix = split[0]
-        //instance.suffix = split[2]
-//        instance.state.code = undefined
         instance.update(instance.state)
     }
 }
 
 function resetCode() {
-    console.log(instance.state)
     setCode(startingCode)
-    console.log(instance.state)
 }
 
 
