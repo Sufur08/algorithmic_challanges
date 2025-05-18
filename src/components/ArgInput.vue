@@ -1,8 +1,8 @@
 <script setup lang="ts" xmlns="http://www.w3.org/1999/html">
 
 import {ref, Ref} from "vue";
-import CloseX from "../../public/CloseX.vue";
-import {vFocus, vFocusEnd} from "../directives"
+import CloseX from "@/../public/CloseX.vue";
+import {vFocus, vFocusEnd} from "@/directives";
 
 type Field = {
     description: string,
@@ -175,13 +175,9 @@ function removeArg(index: number) {
             width: 100%;
             display: inline-grid;
 
-            padding: 5px;
-            padding-block-end: 0;
+            padding-inline: 5px;
+            padding-block: 2.5px;
             border-radius: 5px;
-
-            @media (min-width: 500.001px) {
-                padding-block-start: 0;
-            }
 
             &::after {
                 position: absolute;
@@ -231,7 +227,7 @@ function removeArg(index: number) {
 
     &__description {
         align-content: center;
-        font-size: 16px;
+        font-size: 1em;
     }
 
     &__container {
@@ -274,7 +270,7 @@ function removeArg(index: number) {
         border-block-start: none;
         border-inline-start: none;
 
-        font-size: 15px;
+        font-size: (15/16)em;
         align-content: center;
 
         transition:

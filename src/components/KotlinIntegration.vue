@@ -244,11 +244,9 @@ function resetCode() {
     }
 
     &__options-container {
-
         display: flex;
 
-
-        & span{
+        & span {
             &.kotlin-code__option {
                 font-size: 10px;
                 color: #afb1b3;
@@ -261,12 +259,6 @@ function resetCode() {
             }
         }
 
-        &  {
-            font-size: 10px;
-            color: #afb1b3;
-            text-decoration: underline;
-            cursor: pointer;
-        }
     }
 }
 
