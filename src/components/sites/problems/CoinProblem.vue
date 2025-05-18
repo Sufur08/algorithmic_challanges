@@ -55,6 +55,9 @@ onMounted(() => {
                 in order to achieve the lowest average of needed coins for the values of 1..99.
                 Your function should be able to create this set in different lengths, given as parameter.
             </p>
+            <p>
+                The main focus should be on finding the best result, but keep efficiency in mind.
+            </p>
 
 
         </ProblemDescription>

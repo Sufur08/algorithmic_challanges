@@ -1,8 +1,11 @@
-package main.kotlin.core
+package core
+
+import solutions.CoinProblem
 
 
+fun main() {
 
-fun main(args: Array<String>) {
-    println("Hello World!")
-    "Int.".toInt()
+    println(CoinProblem.tryOut(listOf(1, 3, 10, 8, 40)))
+
+
 }
