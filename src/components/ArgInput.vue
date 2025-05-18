@@ -73,9 +73,9 @@ function removeArg(index: number) {
             v-for="{ arg, index } in additionalArgs.map((it, i) => ({ arg: it, index: i }))"
         >
             <span
-                class="arg-input__arg-name-container arg-input__description"
+                class="arg-input__arg-name-container"
                 >
-                <span class="arg-input__arg-name-mirror">
+                <span class="arg-input__description arg-input__arg-name-mirror">
                     {{arg.name}}
                 </span>
                 <textarea
@@ -137,6 +137,12 @@ function removeArg(index: number) {
     background-color: #243535;
     transition: background-color .1s ease-in-out;
 
+
+    @media (max-width: 500px) {
+        flex-direction: column;
+        align-items: center;
+    }
+
     &__add-arg:hover {
         background-color: darken(#243535, 2%);
     }
@@ -174,6 +180,7 @@ function removeArg(index: number) {
             position: relative;
             width: 100%;
             display: inline-grid;
+            align-items: center;
 
             padding-inline: 5px;
             padding-block: 2.5px;
@@ -218,15 +225,10 @@ function removeArg(index: number) {
         }
     }
 
-
-    @media (max-width: 500px) {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
     &__description {
-        align-content: center;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         font-size: 1em;
     }
 
@@ -271,6 +273,9 @@ function removeArg(index: number) {
         border-inline-start: none;
 
         font-size: (15/16)em;
+        @media (max-width: 500px) or (max-height: 500px) {
+            font-size: .94em;
+        }
         align-content: center;
 
         transition:

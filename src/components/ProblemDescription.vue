@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<{
     background-color: #67aeae66;;
 
     &__question {
-        font-size: 1em;
+        //font-size: 16px;
         font-weight: bold;
     }
 
@@ -46,6 +46,9 @@ const props = withDefaults(defineProps<{
         margin-block: 0;
         padding-block: 0;
         font-size: .96em;
+
+        transition: font-size 0.2s ease;
+
         @media (orientation: landscape) and (max-width: 750px) {
             font-size: .9em;
         }
