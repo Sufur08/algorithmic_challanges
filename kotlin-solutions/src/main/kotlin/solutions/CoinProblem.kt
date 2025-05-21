@@ -1,7 +1,6 @@
 package solutions
 
 import core.Solution
-import kotlin.run
 
 object CoinProblem: Solution
 {

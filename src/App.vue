@@ -41,6 +41,7 @@ const state = useRouteSettings()
 
 
         & > header {
+            z-index: 10000;
             position: fixed;
             height: inRange(12dvh, 34px, 100px);
             width: 100dvw;

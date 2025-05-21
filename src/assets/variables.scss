@@ -4,6 +4,15 @@
     @return min($max, max($value, $min))
 }
 
+@mixin ifSmall {
+    @media (orientation: landscape) and (max-width: 750px) {
+        @content
+    }
+    @media (max-width: 500px) {
+        @content
+    }
+}
+
 $accent1: #6f8f8f;
 
 

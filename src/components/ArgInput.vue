@@ -4,11 +4,6 @@ import {ref, Ref} from "vue";
 import CloseX from "@/../public/CloseX.vue";
 import {vFocus, vFocusEnd} from "@/directives";
 
-type Field = {
-    description: string,
-    type: string,
-    value: Ref<any>,
-}
 
 const props = withDefaults(defineProps<{
     fields: {
@@ -239,7 +234,7 @@ function removeArg(index: number) {
         gap: 6px;
 
         & h3 {
-            margin-block-end: 10px;
+            margin-block: 10px;
         }
 
     }
@@ -273,7 +268,7 @@ function removeArg(index: number) {
         border-inline-start: none;
 
         font-size: (15/16)em;
-        @media (max-width: 500px) or (max-height: 500px) {
+        @include ifSmall {
             font-size: .94em;
         }
         align-content: center;

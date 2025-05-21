@@ -5,6 +5,7 @@ import {computed, onMounted, ref} from "vue";
 import ArgInput from "@/components/ArgInput.vue";
 import {useRouteSettings} from "@/storages";
 import ProblemDescription from "@/components/ProblemDescription.vue";
+import Solution from "@/components/Solution.vue";
 
 
 const pageState = useRouteSettings()
@@ -62,6 +63,7 @@ onMounted(() => {
 
         </ProblemDescription>
 
+        <div style="height: 30px"/>
 
         <ArgInput
             :fields="[formField]"
@@ -74,6 +76,17 @@ onMounted(() => {
             :unnamed-args="optional.map(({value}) => value)"
         />
 
+        <div style="height: 30px"/>
+
+        <Solution
+            :parameters="[formField]"
+            code-file="3wefdf"
+        >
+            <p>
+                text wrgel kzmwhtrilarkhuaerhgg abh reiudfbh krqaybjesbmsvje&shy;zuergaewbm k ,eydxn<!--eg tbrhnf-->
+            </p>
+        </Solution>
+
 
 
     </div>
@@ -85,6 +98,7 @@ onMounted(() => {
 .coin-problem {
 
     padding-inline: 12%;
+    padding-block-end: 18dvh;
     overflow: visible;
 
     display: flex;

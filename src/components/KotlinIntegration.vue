@@ -16,10 +16,13 @@ type Arg = {
 const props = withDefaults(defineProps<{
     maxHeight?: number,
     horizontalExpend?: string,
+    baseWidth?: string  // resting on knife \ you heavy soul \ don't you drown \ and float away
     args?: Array<Arg>,
     unnamedArgs?: Array<string>,
     sampleCode?: string,
-    prescriptedCode?: string
+    prescriptedCode?: string,
+    hiddenDependency?: string | undefined,
+    dependencies?: Array<string>,
 }>(), {
     maxHeight: window.innerHeight * 0.8,
     horizontalExpend: "calc(min(120%, 100dvw) - 100%)",
@@ -30,13 +33,17 @@ const props = withDefaults(defineProps<{
     // print the result
     println(args.joinToString())`,
     prescriptedCode: "",
+    hiddenDependency: undefined,
+    dependencies: () => [],
+    baseWidth: "100%",
 })
 
 
 
 
 const startingCode =
-`fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
+`${props.dependencies.filter((it: string) => it != "").map((it: string) => `import ${it}`).join("\n")}
+fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
 //sampleStart
     ${props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
@@ -46,7 +53,7 @@ const startingCode =
 }`
 const codeContent = ref(startingCode)
 const containerRef = ref(null);
-const expandedWidth = computed(() => { return `calc(100% + ${props.horizontalExpend})` })
+const expandedWidth = computed(() => { return `calc(${props.baseWidth} + ${props.horizontalExpend})` })
 
 const allArgs = computed(() =>
     [...props.args.map(({value}) => { return value }), ...props.unnamedArgs]
@@ -210,6 +217,12 @@ function resetCode() {
                 data-version="1.9.25"
             ><!-- get theme by storage -->
                 {{ codeContent }}
+                <textarea
+                    v-if="hiddenDependency"
+                    class="hidden-dependency"
+                >
+                    {{ hiddenDependency }}
+                </textarea>
             </code>
         </div>
     </div>
@@ -234,7 +247,7 @@ function resetCode() {
     }
     &__container {
         transition: width 0.2s ease-in-out;
-        width: 100%;
+        width: v-bind(baseWidth);
         &.--expanded {
             width: v-bind(expandedWidth);
         }

@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "move-kotlin": "node scripts/copy-kotlin-files.js",
+    "predev": "npm run move-kotlin",
+    "prebuild": "npm run move-kotlin",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

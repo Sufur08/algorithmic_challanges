@@ -42,20 +42,6 @@ const props = withDefaults(defineProps<{
         font-weight: bold;
     }
 
-    & p {
-        margin-block: 0;
-        padding-block: 0;
-        font-size: .96em;
-
-        transition: font-size 0.2s ease;
-
-        @media (orientation: landscape) and (max-width: 750px) {
-            font-size: .9em;
-        }
-        @media (max-width: 500px) {
-            font-size: .9em;
-        }
-    }
 }
 
 </style>
