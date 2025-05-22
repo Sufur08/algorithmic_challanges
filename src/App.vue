@@ -50,6 +50,11 @@ const state = useRouteSettings()
             justify-content: center;
             align-items: center;
 
+            pointer-events: none;
+            & > * {
+                pointer-events: all;
+            }
+
             & > h1 {
                 text-shadow:
                     0 0 26px black,

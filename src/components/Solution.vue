@@ -65,8 +65,8 @@ const hovered = ref(false)
                 class="puzzle-solution__content__kotlin"
             >
                 <KotlinIntegration
-                    base-width="94%"
-                    horizontal-expend="20%"
+                    base-width="74dvw"
+                    horizontal-expend="12.5dvw"
                     :hidden-dependency="`package core; interface Solution { fun entryPoint(vararg args: String) }`"
                     :dependencies="['core.Solution']"
                 />
@@ -87,10 +87,12 @@ const hovered = ref(false)
 
 
 .puzzle-solution {
-//    width: 100%;
-    max-width: 110%;
-    width: 80%;
-    min-width: calc(100% + v-bind(overflowWidth));
+    max-width: 94dvw;
+    width: fit-content;
+    min-width: calc(3em + 74dvw);
+  //  min-width: calc(100% + v-bind(overflowWidth));
+
+    position: relative;
 
 
     transition: height 0.33s ease;
