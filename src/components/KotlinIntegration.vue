@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {computed, onMounted, Ref, ref, watch} from "vue";
+import {computed, onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
 import playground from 'kotlin-playground';
 import {useWindowSize} from "@vueuse/core";
 
@@ -52,7 +52,7 @@ fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescr
 //sampleEnd
 }`
 const codeContent = ref(startingCode)
-const containerRef = ref(null);
+const codeRef = ref(null);
 const expandedWidth = computed(() => { return `calc(${props.baseWidth} + ${props.horizontalExpend})` })
 
 const allArgs = computed(() =>
@@ -66,66 +66,79 @@ const expanded = ref(false);
 const { width } = useWindowSize();
 
 let instance = null;
+let checkID
 
 let compiledMain: Ref<(args: Array<string>) => any> = ref(null);
 
+
 onMounted(() => {
-    playground('code', {
-        onChange: (code: string) => {
-            codeContent.value = code;
-        },
-        getJsCode: (code: string) => {
+    function check() {
+        if (codeRef.value.offsetParent !== null) {
+            playground(codeRef.value, {
+                onChange: (code: string) => {
+                    codeContent.value = code;
+                },
+                getJsCode: (code: string) => {
 
-            if (code) {
-                compiledMain.value = (args: Array<string>) => {
-                    // Die ursprüngliche main-Aufrufzeile finden
-                    const mainCallRegex = /main\(\[(?:"(?:\\.|[^"\\])*"(?:,\s*)?)*]\);/;
+                    if (code) {
+                        compiledMain.value = (args: Array<string>) => {
+                            // Die ursprüngliche main-Aufrufzeile finden
+                            const mainCallRegex = /main\(\[(?:"(?:\\.|[^"\\])*"(?:,\s*)?)*]\);/;
 
-                    // Bereite die Parameter vor - String-Array in Kotlin-Format
-                    const paramsStr = JSON.stringify(args);
-                    const mainCall = `main(${paramsStr});`;
+                            // Bereite die Parameter vor - String-Array in Kotlin-Format
+                            const paramsStr = JSON.stringify(args);
+                            const mainCall = `main(${paramsStr});`;
 
-                    // Ersetze den ursprünglichen main()-Aufruf durch unseren
-                    const modifiedCode = code.replace(mainCallRegex, mainCall);
+                            // Ersetze den ursprünglichen main()-Aufruf durch unseren
+                            const modifiedCode = code.replace(mainCallRegex, mainCall);
 
-                    // Führe den modifizierten Code aus und erfasse den Rückgabewert
-                    try {
-                        //const execFunc = new Function(returnValueCode);
-                        return eval(modifiedCode);
-                    } catch (error) {
-                        console.log("Failed running kotlin code as javascript: ", error);
-                        return error; // Den Fehler weiterwerfen, damit der Aufrufer ihn behandeln kann
+                            // Führe den modifizierten Code aus und erfasse den Rückgabewert
+                            try {
+                                //const execFunc = new Function(returnValueCode);
+                                return eval(modifiedCode);
+                            } catch (error) {
+                                console.log("Failed running kotlin code as javascript: ", error);
+                                return error; // Den Fehler weiterwerfen, damit der Aufrufer ihn behandeln kann
+                            }
+                        }
+                    }
+
+
+                    //console.log(code);
+                    //console.log(eval(code));
+                    //compiledMain.value(["30"])
+                    //   console.log("return: " + runWithParams(code, ["20"]))
+                },
+                getInstance: (it) => {
+                    console.log(it);
+                    instance = it;
+                },
+                callback: () => {
+                    instance.codemirror.on("change", () => {
+                        changeSize();
+                    });
+//            instance.state.jsLibs = ["/kotlin.js"];
+                    changeSize();
+                    instance.state.args = replaceWhitespaces(allArgs.value).join(' ')
+                    const oldOnUpdate = instance.onUpdate;
+                    instance.onUpdate = (it)  => {
+                        if (it.output && compiledMain.value && it.output != compiledMain.value(allArgs.value))
+                            setOutput(compiledMain.value(allArgs.value))
+                        else oldOnUpdate(it);
                     }
                 }
-            }
-
-
-            //console.log(code);
-            //console.log(eval(code));
-            //compiledMain.value(["30"])
-         //   console.log("return: " + runWithParams(code, ["20"]))
-        },
-        getInstance: (it) => {
-            console.log(it);
-            instance = it;
-        },
-        callback: () => {
-            instance.codemirror.on("change", () => {
-                changeSize();
             });
-//            instance.state.jsLibs = ["/kotlin.js"];
-            changeSize();
-            instance.state.args = replaceWhitespaces(allArgs.value).join(' ')
-            const oldOnUpdate = instance.onUpdate;
-            instance.onUpdate = (it)  => {
-                if (it.output && compiledMain.value && it.output != compiledMain.value(allArgs.value))
-                    setOutput(compiledMain.value(allArgs.value))
-                else oldOnUpdate(it);
-            }
+            return;
         }
-    });
+        checkID = requestAnimationFrame(check)
+    }
+     checkID = requestAnimationFrame(check)
 
 });
+
+onBeforeUnmount(() => {
+    cancelAnimationFrame(checkID);
+})
 
 watch(
     () => allArgs.value,
@@ -209,7 +222,7 @@ function resetCode() {
                 </span>
             </div>
             <code
-
+                ref="codeRef"
                 class="kotlin-code"
                 theme="darcula"
                 match-brackets="true"
@@ -239,6 +252,7 @@ function resetCode() {
 
 
 .kotlin-code {
+    visibility: hidden;
     &__positioner {
         overflow: visible;
         display: flex;

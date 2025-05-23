@@ -51,7 +51,8 @@ const hovered = ref(false)
 
         <div
             class="puzzle-solution__content"
-            v-animated-if.height="extended"
+            v-animated-if.height.thenWidth="extended"
+            data-v-base-width="74dvw"
         >
             <div
                 class="puzzle-solution__content__description"
@@ -78,7 +79,6 @@ const hovered = ref(false)
 
 
 
-
 </template>
 
 <style lang="scss">
@@ -87,13 +87,7 @@ const hovered = ref(false)
 
 
 .puzzle-solution {
-    max-width: 94dvw;
-    width: fit-content;
-    min-width: calc(3em + 74dvw);
-  //  min-width: calc(100% + v-bind(overflowWidth));
-
-    position: relative;
-
+    //position: relative;
 
     transition: height 0.33s ease;
 
@@ -106,11 +100,15 @@ const hovered = ref(false)
     flex-direction: column;
     align-content: center;
 
-
-
     //    color: #243535;
     background-color: rgba(84, 142, 142, 0.4);;
 
+
+    min-width: calc(3em + 74dvw);
+    &, &__content, &__content__kotlin {
+        max-width: 94dvw;
+        width: fit-content;
+    }
 
     &__extend {
         display: flex;

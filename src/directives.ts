@@ -1,5 +1,17 @@
 import {App} from "vue";
+import {defaultAllowedOrigins} from "vite";
 
+function measureCss(el: HTMLElement, css: string) {
+    const temp = document.createElement("div");
+    temp.style.position = "absolute";
+    temp.style.visibility = "hidden";
+    temp.style.width = css;
+    const parent = el.parentElement;
+    parent.appendChild(temp);
+    const px = temp.offsetWidth;
+    parent.removeChild(temp);
+    return px;
+}
 
 function setSelection(el, start, end) {
     const type = el.type
@@ -40,66 +52,101 @@ export const vFocusEnd = {
 
 export const vAnimatedIf = {
     beforeMount: (el, binding) => {
+        el.dataset.vAnimatingIf = "0";
     },
     mounted: (el, binding) => {
-        vAnimatedIf.updated(el, binding)
+     //   binding.modifiers = { ...binding.modifiers, duration: 0 };
+       // vAnimatedIf.updated(el, binding)    /// create style tag with individual id to el to store keyframes for an animation
+        el.style.display = "none"
 
-        requestAnimationFrame(() => {
-            if (!binding.value) el.style.display = 'none';
-        })
+
     },
     updated: (el, binding) => {
         const transitionTime = binding.modifiers.duration ?? .4
-        const transitionString = (before: string) => `all ${transitionTime}s ease${before ? ", " + before : ''}`
         const before = { ...el.style, display: "" }
-        function setTo0() {
-            if (binding.modifiers.height)
-            {
-                el.style.height = "0";
+        const level = Number(el.dataset.vAnimatingIf) + 1
+        el.dataset.vAnimatingIf = level
+        const transitionString = (old: string = before.transition) => `all ${transitionTime}s ease${old ? ", " + old : ''}`
+        function setTo0(height = binding.modifiers.height, width = binding.modifiers.width) {
+            if (height) {
+                el.style.height = el.dataset.vBaseHeight ?? "0";
                 el.style.paddingBlock = "0";
                 el.style.marginBlock = "0";
             }
-            if (binding.modifiers.width)
-            {
-                el.style.width = "0";
+            if (width) {
+                el.style.width = el.dataset.vBaseWidth ?? "0";
                 el.style.paddingInline = "0";
                 el.style.marginInline = "0";
             }
         }
-        function setToExtended() {
-            if (binding.modifiers.height) {
+        function setToExtended(height = binding.modifiers.height, width = binding.modifiers.width) {
+            if (height) {
                 el.style.height = el.scrollHeight + 'px';
                 el.style.paddingBlock = before.paddingBlock;
                 el.style.marginBlock = before.marginBlock;
             }
-            if (binding.modifiers.width) {
+            if (width) {
                 el.style.width = el.scrollWidth + 'px';
                 el.style.paddingInline = before.paddingInline;
                 el.style.marginInline = before.marginInline;
             }
         }
-        if (binding.value) {
-            el.style.display = ""
-            el.style.overflow = "hidden";
-            setTo0();
-            el.style.transition = transitionString(before.transition);
+        console.log(binding)
+        function doPrimary(extend: boolean, after: () => any) {
             requestAnimationFrame(() => {
-                setToExtended();
+                extend ? setToExtended() : setTo0();
                 setTimeout(() => {
-                    el.style = before;
-                }, (transitionTime + .01) * 1000)
+                    if (el.dataset.vAnimatingIf != level) return;
+                    after();
+                }, (transitionTime) * 1000);
             })
-        } else {
-            el.style.overflow = "hidden";
-            setToExtended();
-            el.style.transition = transitionString(before.transition);
+        }
+        function doSecondary(extend: boolean, after: () => any) {
+            if ((binding.modifiers.thenHeight && (el.scrollHeight == (el.dataset.vBaseHeight ? measureCss(el, el.dataset.vBaseHeight) : "0px"))) ||
+                (binding.modifiers.thenWidth && (el.scrollWidth == (el.dataset.vBaseWidth ? measureCss(el, el.dataset.vBaseWidth) : "0px")))) {
+                after(); return;
+            }  // padding and margin should be checked as well but idc
             requestAnimationFrame(() => {
-                setTo0();
+                extend ? setToExtended(binding.modifiers.thenHeight ?? false, binding.modifiers.thenWidth ?? false)
+                    : setTo0(binding.modifiers.thenHeight ?? false, binding.modifiers.thenWidth ?? false);
                 setTimeout(() => {
-                    el.style = before;
-                    el.style.display = "none"
-                    console.log("display none")
-                }, (transitionTime + .01) * 1000)
+                    if (el.dataset.vAnimatingIf != level) return;
+                    after();
+                }, (transitionTime) * 1000);
+            })
+        }
+        function reset() {
+            if (el.dataset.vStillAnimating) return;
+            el.style = before;
+            el.dataset.vAnimatingIf = "0"
+//            delete el.dataset.vAnimatingIf;
+        }
+        el.style.overflow = "hidden";
+        el.style.transition = transitionString();
+        if (binding.value) {
+            setTo0(binding.modifiers.height || binding.modifiers.thenHeight,
+                binding.modifiers.width || binding.modifiers.thenWidth);
+            el.style.display = "";
+            if (binding.modifiers.thenHeight || binding.modifiers.thenWidth) {
+                doSecondary(true, () => {
+                    doPrimary(true, reset);
+                });
+            } else {
+                doPrimary(true, reset);
+            }
+        } else {
+            setToExtended(binding.modifiers.height || binding.modifiers.thenHeight,
+                binding.modifiers.width || binding.modifiers.thenWidth);
+            doPrimary( false, () => {
+                if (binding.modifiers.thenHeight || binding.modifiers.thenWidth) {
+                    doSecondary(false, () => {
+                        reset()
+                        el.style.display = "none";
+                    })
+                } else {
+                    reset()
+                    el.style.display = "none";
+                }
             })
         }
     }
