@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<{
     prescriptedCode?: string,
     hiddenDependency?: string | undefined,
     dependencies?: Array<string>,
+    viewOnly?: boolean,
 }>(), {
     maxHeight: window.innerHeight * 0.8,
     horizontalExpend: "calc(min(120%, 100dvw) - 100%)",
@@ -36,6 +37,7 @@ const props = withDefaults(defineProps<{
     hiddenDependency: undefined,
     dependencies: () => [],
     baseWidth: "100%",
+    viewOnly: false,
 })
 
 
@@ -43,13 +45,10 @@ const props = withDefaults(defineProps<{
 
 const startingCode =
 `${props.dependencies.filter((it: string) => it != "").map((it: string) => `import ${it}`).join("\n")}
-fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}
-//sampleStart
-    ${props.args.map((value, index) => (
+fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}${props.viewOnly ? "" : "\n//sampleStart"}
+    ${props.args.length > 0 ? props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
-    )).join("\n\t")}
-    ${props.sampleCode}
-//sampleEnd
+    )).join("\n\t") + "\n" : ""}${props.sampleCode}${props.viewOnly ? "" : "//sampleEnd"}
 }`
 const codeContent = ref(startingCode)
 const codeRef = ref(null);
@@ -117,6 +116,11 @@ onMounted(() => {
                     instance.codemirror.on("change", () => {
                         changeSize();
                     });
+                    if (props.viewOnly) {
+                        instance.state.highlightOnly = true;
+                        instance.state.lines = true;
+                        instance.update(instance.state);
+                    }
 //            instance.state.jsLibs = ["/kotlin.js"];
                     changeSize();
                     instance.state.args = replaceWhitespaces(allArgs.value).join(' ')

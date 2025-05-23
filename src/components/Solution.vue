@@ -70,6 +70,7 @@ const hovered = ref(false)
                     horizontal-expend="12.5dvw"
                     :hidden-dependency="`package core; interface Solution { fun entryPoint(vararg args: String) }`"
                     :dependencies="['core.Solution']"
+                    :view-only="true"
                 />
             </div>
         </div>
