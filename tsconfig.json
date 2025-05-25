@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ES2017", "DOM"],
+    "jsx": "preserve",
+    "strict": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist"]
+}

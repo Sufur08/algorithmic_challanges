@@ -80,10 +80,20 @@ onMounted(() => {
 
         <Solution
             :parameters="[formField]"
-            code-file="3wefdf"
+            code-file="/kotlin/CoinProblem.kt"
         >
             <p>
-                text wrgel kzmwhtrilarkhuaerhgg abh reiudfbh krqaybjesbmsvje&shy;zuergaewbm k ,eydxn<!--eg tbrhnf-->
+                My solution doesn't focus that much on the function that actually searches the best result,
+                rather than the one that verifies each result and finds the best arrangement of the given coins to total different values.
+            </p>
+            <p>
+                For example:
+                <br/><tab/>coins = [1, 3, 8, 10, 40]; value = 27
+                <br/><tab/>The 'intuitive' solution here would be [10, 10, 3, 3, 1]; size = 5.
+                <br/><tab/>But theres a better one: [8, 8, 8, 3]; size = 4
+            </p>
+            <p>
+
             </p>
         </Solution>
 

@@ -8,3 +8,7 @@ save code?
 make playground allow custom indentation!!!
 
 
+vAnimateIf option to make transition time dependant on the transitioned px
+
+measure time via js
+

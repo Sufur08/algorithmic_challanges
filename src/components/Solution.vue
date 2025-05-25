@@ -2,7 +2,7 @@
 
 
 import ExtendMenuIcon from "../../public/ExtendMenuIcon.vue";
-import {Ref, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, Ref, ref, watch} from "vue";
 import KotlinIntegration from "@/components/KotlinIntegration.vue";
 import ArgInput from "@/components/ArgInput.vue";
 import {vAnimatedIf} from "@/directives";
@@ -24,6 +24,23 @@ const props = withDefaults(defineProps<{
 const extended = ref(false)
 const hovered = ref(false)
 
+
+
+let codeContent = ref("[loading code]")
+
+
+onMounted(() => {
+
+    const regex = /object(?:[^}]*})+/
+    const loadCode = async () => {
+        const response = await fetch(props.codeFile)
+        codeContent.value = "\n" + (await response.text()).match(regex)[0] + "\n"
+        return codeContent.value
+    }
+
+    loadCode()
+
+})
 
 
 </script>
@@ -70,7 +87,10 @@ const hovered = ref(false)
                     horizontal-expend="12.5dvw"
                     :hidden-dependency="`package core; interface Solution { fun entryPoint(vararg args: String) }`"
                     :dependencies="['core.Solution']"
-                    :view-only="true"
+                    :editable="false"
+                    :hide-stuff="false"
+                    :hidden-outside-main="codeContent"
+                    :sample-code="`${codeFile.split('/').pop().replace('.kt', '')}.entryPoint(*args)`"
                 />
             </div>
         </div>
@@ -99,15 +119,17 @@ const hovered = ref(false)
 
     display: flex;
     flex-direction: column;
-    align-content: center;
+    align-items: center;
 
     //    color: #243535;
     background-color: rgba(84, 142, 142, 0.4);;
 
 
     min-width: calc(3em + 74dvw);
-    &, &__content, &__content__kotlin {
-        max-width: 94dvw;
+    max-width: min(96dvw, calc(3em + 94dvw));
+    width: fit-content;
+    &__content, &__content__kotlin {
+        max-width: calc(min(96dvw, (94dvw + 3em)) - 3em);
         width: fit-content;
     }
 
@@ -117,6 +139,7 @@ const hovered = ref(false)
         gap: 10px;
         cursor: pointer;
         transition: color 0.2s ease;
+        width: 100%;
 
         & > h2 {
             transition: color 0.1s ease;
@@ -155,6 +178,20 @@ const hovered = ref(false)
         gap: 1em;
 
         margin-block-start: 1.4em;
+
+
+        &__description {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: .75em;
+
+            & tab {
+                display: inline-block;
+                width: 2em;
+            }
+
+        }
 
     }
 

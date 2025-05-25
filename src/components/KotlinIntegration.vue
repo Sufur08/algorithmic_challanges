@@ -20,10 +20,13 @@ const props = withDefaults(defineProps<{
     args?: Array<Arg>,
     unnamedArgs?: Array<string>,
     sampleCode?: string,
-    prescriptedCode?: string,
+    hiddenInMain?: string,
+    hiddenOutsideMain?: string,
     hiddenDependency?: string | undefined,
     dependencies?: Array<string>,
-    viewOnly?: boolean,
+    editable?: boolean,
+    editableStrict?: boolean,
+    hideStuff?: boolean,
 }>(), {
     maxHeight: window.innerHeight * 0.8,
     horizontalExpend: "calc(min(120%, 100dvw) - 100%)",
@@ -33,24 +36,28 @@ const props = withDefaults(defineProps<{
     // your code here
     // print the result
     println(args.joinToString())`,
-    prescriptedCode: "",
+    hiddenInMain: "",
+    hiddenOutsideMain: "",
     hiddenDependency: undefined,
     dependencies: () => [],
     baseWidth: "100%",
-    viewOnly: false,
+    editable: true,
+    editableStrict: false,
+    hideStuff: true,
 })
 
 
 
 
-const startingCode =
+const startingCode = computed(() =>
 `${props.dependencies.filter((it: string) => it != "").map((it: string) => `import ${it}`).join("\n")}
-fun main(args: Array\<\String\>\) {${props.prescriptedCode ? "\n" + props.prescriptedCode : ""}${props.viewOnly ? "" : "\n//sampleStart"}
+${props.hiddenOutsideMain}
+fun main(args: Array\<\String\>\) {${props.hiddenInMain ? "\n" + props.hiddenInMain : ""}${props.hideStuff ? "\n//sampleStart" : ""}
     ${props.args.length > 0 ? props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`
-    )).join("\n\t") + "\n" : ""}${props.sampleCode}${props.viewOnly ? "" : "//sampleEnd"}
-}`
-const codeContent = ref(startingCode)
+    )).join("\n\t") + "\n" : ""}${props.sampleCode}${props.hideStuff ? " //sampleEnd" : ""}
+}`)
+const codeContent = ref(startingCode.value)
 const codeRef = ref(null);
 const expandedWidth = computed(() => { return `calc(${props.baseWidth} + ${props.horizontalExpend})` })
 
@@ -62,6 +69,8 @@ function replaceWhitespaces(list: string[]) {
 }
 
 const expanded = ref(false);
+const editable = ref(props.editable);
+
 const { width } = useWindowSize();
 
 let instance = null;
@@ -116,11 +125,6 @@ onMounted(() => {
                     instance.codemirror.on("change", () => {
                         changeSize();
                     });
-                    if (props.viewOnly) {
-                        instance.state.highlightOnly = true;
-                        instance.state.lines = true;
-                        instance.update(instance.state);
-                    }
 //            instance.state.jsLibs = ["/kotlin.js"];
                     changeSize();
                     instance.state.args = replaceWhitespaces(allArgs.value).join(' ')
@@ -128,8 +132,16 @@ onMounted(() => {
                     instance.onUpdate = (it)  => {
                         if (it.output && compiledMain.value && it.output != compiledMain.value(allArgs.value))
                             setOutput(compiledMain.value(allArgs.value))
-                        else oldOnUpdate(it);
+
+                        if (!editable.value) {
+                            instance.codemirror.setOption("readOnly", true);
+                            instance.codemirror.setOption("cursorBlinkRate", -1);
+                        }
+
+                        oldOnUpdate(it);
                     }
+                    instance.update({})
+
                 }
             });
             return;
@@ -144,6 +156,16 @@ onBeforeUnmount(() => {
     cancelAnimationFrame(checkID);
 })
 
+
+watch(startingCode, (newCode) => {
+    codeContent.value = newCode
+})
+watch(editable, (newEditable) => {
+    if (newEditable) {
+        instance?.codemirror.setOption("readOnly", false);
+        instance?.codemirror.setOption("cursorBlinkRate", 530);
+    } else instance?.update({})
+})
 watch(
     () => allArgs.value,
     (newArgs) => {
@@ -192,7 +214,7 @@ function setCode(code: string) {
 }
 
 function resetCode() {
-    setCode(startingCode)
+    setCode(startingCode.value)
 }
 
 
@@ -219,6 +241,13 @@ function resetCode() {
                     {{ expanded ? "collapse" : "expand" }} horizontally
                 </span>
                 <span
+                    class="kotlin-code__option kotlin-code__switch-editable"
+                    v-if="!editableStrict"
+                    @click="editable = !editable"
+                >
+                    make {{ editable ? 'read-only' : 'editable' }}
+                </span>
+                <span
                     class="kotlin-code__option kotlin-code__resetter"
                     @click="resetCode"
                 >
@@ -230,6 +259,7 @@ function resetCode() {
                 class="kotlin-code"
                 theme="darcula"
                 match-brackets="true"
+                lines="true"
                 data-target-platform="js"
                 data-version="1.9.25"
             ><!-- get theme by storage -->
@@ -257,6 +287,7 @@ function resetCode() {
 
 .kotlin-code {
     visibility: hidden;
+
     &__positioner {
         overflow: visible;
         display: flex;
@@ -272,10 +303,17 @@ function resetCode() {
         & .output {
             overflow-wrap: break-word;
         }
+        & .code-output {
+            white-space: pre-wrap;
+            max-height: 42dvh;
+        }
+
     }
 
     &__options-container {
         display: flex;
+        gap: 3%;
+        justify-content: space-between;
 
         & span {
             &.kotlin-code__option {
@@ -284,9 +322,14 @@ function resetCode() {
                 text-decoration: underline;
                 cursor: pointer;
             }
+            &.kotlin-code__expander {
+                margin-inline-end: auto;
+            }
+            &.kotlin-code__switch-editable {
+                color: #cfd2d8;
+            }
             &.kotlin-code__resetter {
                 color: #f86969;
-                margin-inline-start: auto;
             }
         }
 

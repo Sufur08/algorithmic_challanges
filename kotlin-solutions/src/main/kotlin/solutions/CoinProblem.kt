@@ -11,10 +11,9 @@ object CoinProblem: Solution
 
     override fun entryPoint(vararg args: String)
     {
-        val arg: Int = args[0].toInt()
-        println(findValues(arg).toString { "denominations: [${first.joinToString(", ")}]\naverage coins needed: $second" })
+        if (args.size > 1) tryOut(args[1].filter { it != ' ' }.split(',').map { it.toInt() }, true)
+        else println(findValues(args[0].toInt()).toString { "denominations: [${first.joinToString(", ")}]\naverage coins needed: $second" })
     }
-
 
     /**
      * @param valueCount number of different allowed denominations
@@ -30,51 +29,89 @@ object CoinProblem: Solution
                 (Array(50) { it * 2 + 1 } + Array(valueCount - 50) { (it + 1) * 2 }).toList()
                     .run { this to tryOut(this) }
 
-        return listOf(2) to .0
+        val list: ArrayList<Int> = arrayListOf(1)
+        var best: Pair<List<Int>, Double> = listOf<Int>() to 100.0
+        fun bruteForce(rep: Int, entry: Int)
+        {
+            if (rep == valueCount)
+            {
+                tryOut(list, iKnowWhatIDo = true).apply {
+                    if (this < best.second) best = ArrayList(list) to this
+                }
+                return
+            }
+            for (i in (entry)..98)
+            {
+                list.add(i)
+                bruteForce(rep + 1, i + 1)
+                list.removeAt(rep)
+            }
+        }
+        bruteForce(1, 2)
+
+        return best
     }
 
 
-    fun tryOut(values: Collection<Int>): Double
+    /**
+     * @param values the set of values to be tested
+     * @param printOut whether the best results should be printed out
+     * @param iKnowWhatIDo whether [values] should be filtered (`values.filter { it in -99..99 && it != 0 }`)
+     * @return the average number of coins needed to total the values in 1..99
+     */
+    fun tryOut(values: Collection<Int>, printOut: Boolean = false, iKnowWhatIDo: Boolean = false): Double
     {
-        if (1 !in values) throw ValueUnreachable(1)
+        val sorted =
+            if (iKnowWhatIDo) values.sorted()
+            else values.filter { it in -99..99 && it != 0 }.sorted()
 
-        val sorted = values.filter { it in -99..99 && it != 0 }.sorted().reversed()
-        val solutions: HashMap<Int, ArrayList<Int>> = hashMapOf(0 to arrayListOf())
-
-        fun findSolution(v: Int, coins: List<Int>): ArrayList<Int>
+        // less efficient solution which saves the set of coins to each value instead of only the length
+        // -> can be printed
+        if (printOut)
         {
-            if (v in solutions) return ArrayList(solutions[v]!!)
+            if (1 !in values) throw ValueUnreachable(1)
 
-            var solution: ArrayList<Int> = object : ArrayList<Int>() {
-                override val size: Int = 100
-            }
+            val solutions: HashMap<Int, ArrayList<Int>> = hashMapOf(0 to arrayListOf(), 1 to arrayListOf(1))
 
-            for (coin in coins)
+            fun findSolution(v: Int, coins: List<Int>): ArrayList<Int>
             {
-                val a: Int = v / coin
-                if (a == 0 || a > solution.size) continue
-                val b = v % coin
-                if (v - b in solutions && solutions[v - b]!!.size < a) continue
-                val x = findSolution(b, coins.filter { it != coin })
-                if (a + x.size < solution.size) solution = x.apply { addAll(Array(a) { coin }) }
+                if (v in solutions) return ArrayList(solutions[v]!!)
+                var solution: ArrayList<Int> = object : ArrayList<Int>() {
+                    override val size: Int = 100
+                }
+                for (coin in coins)
+                {
+                    if (coin > v) break
+                    val sol = findSolution(v - coin, coins)
+                    if (sol.size + 1 < solution.size)
+                    {
+                        solution = sol.apply { add(coin) }
+                    }
+                }
+                if (solution.isEmpty()) throw ValueUnreachable(v)
+                solutions.put(v, solution)
+                return solution
             }
+            for (i in 1..99)
+                findSolution(i, sorted)
 
-            if (solution.isEmpty) throw ValueUnreachable(v)
-            solutions.put(v, solution)
-            println(solution.joinToString(", "))
-            return solution
+            val avg = solutions.values.sumOf { it.size.toDouble() } / 99
+            println(solutions.map { "${it.key}: " + it.value.joinToString(", ")}.joinToString("\n") + "\navg: $avg")
+            return avg
         }
 
-
+        val solutions = IntArray(100) { 100 }
+        solutions[0] = 0
         for (i in 1..99)
-            findSolution(i, sorted)
-
-        return solutions.values.sumOf { it.size.toDouble() } / 99
-
+        {
+            for (coin in sorted)
+            {
+                if (coin > i) break
+                solutions[i] = minOf(solutions[i], solutions[i - coin] + 1)
+            }
+            if (solutions[i] == 100) throw ValueUnreachable(i)
+        }
+        return solutions.slice(1..99).average()
     }
-
-
-
-
 
 }
