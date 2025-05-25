@@ -62,6 +62,7 @@ export const vAnimatedIf = {
 
     },
     updated: (el, binding) => {
+        if (binding.value == binding.oldValue) return;
         const transitionTime = binding.modifiers.duration ?? .4
         const before = { ...el.style, display: "" }
         const level = Number(el.dataset.vAnimatingIf) + 1

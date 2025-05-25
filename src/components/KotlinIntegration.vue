@@ -77,7 +77,24 @@ let instance = null;
 let checkID
 
 let compiledMain: Ref<(args: Array<string>) => any> = ref(null);
+let compiledMainStr: Ref<(args: Array<string>) => string> = ref(() => "");
 
+
+let worker: Worker = {terminate() {}} as Worker;
+function executeCode() {
+    worker.terminate();
+
+    setOutput("running...")
+    const blob = new Blob([ `
+  self.postMessage(eval(${JSON.stringify(compiledMainStr.value(allArgs.value))}));
+`], { type: 'application/javascript' });
+    worker = new Worker(URL.createObjectURL(blob));
+    worker.onmessage = (event) => {
+        console.log(event.data);
+        setOutput(event.data);
+    }
+
+}
 
 onMounted(() => {
     function check() {
@@ -89,21 +106,20 @@ onMounted(() => {
                 getJsCode: (code: string) => {
 
                     if (code) {
-                        compiledMain.value = (args: Array<string>) => {
+                        const bla = (args: Array<string>) => {
                             // Die ursprüngliche main-Aufrufzeile finden
                             const mainCallRegex = /main\(\[(?:"(?:\\.|[^"\\])*"(?:,\s*)?)*]\);/;
-
                             // Bereite die Parameter vor - String-Array in Kotlin-Format
                             const paramsStr = JSON.stringify(args);
                             const mainCall = `main(${paramsStr});`;
-
-                            // Ersetze den ursprünglichen main()-Aufruf durch unseren
-                            const modifiedCode = code.replace(mainCallRegex, mainCall);
-
+                            return code.replace(mainCallRegex, mainCall);
+                        }
+                        compiledMainStr.value = bla;
+                        compiledMain.value = (args: Array<string>) => {
                             // Führe den modifizierten Code aus und erfasse den Rückgabewert
                             try {
                                 //const execFunc = new Function(returnValueCode);
-                                return eval(modifiedCode);
+                                return eval(bla(args));
                             } catch (error) {
                                 console.log("Failed running kotlin code as javascript: ", error);
                                 return error; // Den Fehler weiterwerfen, damit der Aufrufer ihn behandeln kann
@@ -125,13 +141,15 @@ onMounted(() => {
                     instance.codemirror.on("change", () => {
                         changeSize();
                     });
+                    instance.jsExecutor.executeJsCode = async function() {
+                        executeCode()
+                        return "running..."
+                    }
 //            instance.state.jsLibs = ["/kotlin.js"];
                     changeSize();
                     instance.state.args = replaceWhitespaces(allArgs.value).join(' ')
                     const oldOnUpdate = instance.onUpdate;
                     instance.onUpdate = (it)  => {
-                        if (it.output && compiledMain.value && it.output != compiledMain.value(allArgs.value))
-                            setOutput(compiledMain.value(allArgs.value))
 
                         if (!editable.value) {
                             instance.codemirror.setOption("readOnly", true);
@@ -169,9 +187,10 @@ watch(editable, (newEditable) => {
 watch(
     () => allArgs.value,
     (newArgs) => {
+        if (!instance) return;
         instance.state.args = replaceWhitespaces(newArgs).join(' ')
-        if (compiledMain.value) {
-            setOutput(compiledMain.value(newArgs))
+        if (compiledMainStr.value) {
+            executeCode()
         } else {
             instance.execute();
         }
@@ -197,7 +216,7 @@ function setOutput(output: any) {
         instance.state.output = ""
         instance.state.exception = output
     }
-    instance.update({ openConsole: true })
+    instance.update({ })
 }
 
 function setCode(code: string) {

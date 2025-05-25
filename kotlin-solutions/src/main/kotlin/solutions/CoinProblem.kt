@@ -11,7 +11,7 @@ object CoinProblem: Solution
 
     override fun entryPoint(vararg args: String)
     {
-        if (args.size > 1) tryOut(args[1].filter { it != ' ' }.split(',').map { it.toInt() }, true)
+        if (args.size > 1 && args[1].isNotEmpty()) tryOut(args[1].filter { it != ' ' }.split(',').map { it.toInt() }, true)
         else println(findValues(args[0].toInt()).toString { "denominations: [${first.joinToString(", ")}]\naverage coins needed: $second" })
     }
 

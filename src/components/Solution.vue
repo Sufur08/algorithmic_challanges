@@ -33,7 +33,7 @@ onMounted(() => {
 
     const regex = /object(?:[^}]*})+/
     const loadCode = async () => {
-        const response = await fetch(props.codeFile)
+        const response = await fetch(window.location.pathname.split('/').slice(0, -1).join('/') + props.codeFile)
         codeContent.value = "\n" + (await response.text()).match(regex)[0] + "\n"
         return codeContent.value
     }
@@ -87,6 +87,7 @@ onMounted(() => {
                     horizontal-expend="12.5dvw"
                     :hidden-dependency="`package core; interface Solution { fun entryPoint(vararg args: String) }`"
                     :dependencies="['core.Solution']"
+                    :unnamed-args="parameters.map(({value}) => value.value?.toString()).filter((it) => it != null)"
                     :editable="false"
                     :hide-stuff="false"
                     :hidden-outside-main="codeContent"

@@ -10,27 +10,34 @@ import Solution from "@/components/Solution.vue";
 
 const pageState = useRouteSettings()
 
-const arg = ref(100);
+const arg = ref(3);
 
 const args = computed(() => {
-    return [
-        {
-            name: "arg1",
-            kotlinType: "Int",
-            kotlinTypeParser: (it: string) => `${it}.toInt()`,
-            value: arg.value.toString()
-        }
-    ]
+    return [{
+        name: "arg1",
+        kotlinType: "Int",
+        kotlinTypeParser: (it: string) => `${it}.toInt()`,
+        value: arg.value.toString()
+    }]
 })
 
 const formField = {
-    description: "Please enter a number:",
+    description: "number of coins:",
     type: "number",
     value: arg,
 }
 
 const optional = ref<{ name: string, value: string}[]>([])
-console.log(optional.value)
+
+const solutionArgs = [{
+    description: "number of coins:",
+    type: "number",
+    value: ref(3),
+}, {
+    description: "instead show solution of:",
+    type: "text",
+    value: ref(null)
+}]
 
 
 onMounted(() => {
@@ -79,7 +86,7 @@ onMounted(() => {
         <div style="height: 30px"/>
 
         <Solution
-            :parameters="[formField]"
+            :parameters="solutionArgs"
             code-file="/kotlin/CoinProblem.kt"
         >
             <p>
@@ -93,7 +100,7 @@ onMounted(() => {
                 <br/><tab/>But theres a better one: [8, 8, 8, 3]; size = 4
             </p>
             <p>
-
+                To see the best combination of coins for the values, specify a set as the second parameter in the format of numbers seperated by commas.
             </p>
         </Solution>
 
