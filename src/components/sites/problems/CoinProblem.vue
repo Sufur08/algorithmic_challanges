@@ -6,6 +6,7 @@ import ArgInput from "@/components/ArgInput.vue";
 import {useRouteSettings} from "@/storages";
 import ProblemDescription from "@/components/ProblemDescription.vue";
 import Solution from "@/components/Solution.vue";
+import Indented from "@/components/Indented.vue";
 
 
 const pageState = useRouteSettings()
@@ -95,9 +96,9 @@ onMounted(() => {
             </p>
             <p>
                 For example:
-                <br/><tab/>coins = [1, 3, 8, 10, 40]; value = 27
-                <br/><tab/>The 'intuitive' solution here would be [10, 10, 3, 3, 1]; size = 5.
-                <br/><tab/>But theres a better one: [8, 8, 8, 3]; size = 4
+                <br/><Indented>coins = [1, 3, 8, 10, 40]; value = 27</Indented>
+                <br/><Indented>The 'intuitive' solution here would be [10, 10, 3, 3, 1]; size = 5.</Indented>
+                <br/><Indented>But theres a better one: [8, 8, 8, 3]; size = 4</Indented>
             </p>
             <p>
                 To see the best combination of coins for the values, specify a set as the second parameter in the format of numbers seperated by commas.

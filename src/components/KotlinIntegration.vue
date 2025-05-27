@@ -86,11 +86,12 @@ function executeCode() {
 
     setOutput("running...")
     const blob = new Blob([ `
-  self.postMessage(eval(${JSON.stringify(compiledMainStr.value(allArgs.value))}));
+    let ret;
+    try{ret = eval(${JSON.stringify(compiledMainStr.value(allArgs.value))})}catch(e){ret = e}
+  self.postMessage(ret);
 `], { type: 'application/javascript' });
     worker = new Worker(URL.createObjectURL(blob));
     worker.onmessage = (event) => {
-        console.log(event.data);
         setOutput(event.data);
     }
 
@@ -145,6 +146,9 @@ onMounted(() => {
                         executeCode()
                         return "running..."
                     }
+                    instance.state.onCloseConsole = () => {
+                        worker.terminate()
+                    }
 //            instance.state.jsLibs = ["/kotlin.js"];
                     changeSize();
                     instance.state.args = replaceWhitespaces(allArgs.value).join(' ')
@@ -189,7 +193,7 @@ watch(
     (newArgs) => {
         if (!instance) return;
         instance.state.args = replaceWhitespaces(newArgs).join(' ')
-        if (compiledMainStr.value) {
+        if (compiledMain.value) {
             executeCode()
         } else {
             instance.execute();

@@ -187,11 +187,6 @@ onMounted(() => {
             align-items: stretch;
             gap: .75em;
 
-            & tab {
-                display: inline-block;
-                width: 2em;
-            }
-
         }
 
     }
