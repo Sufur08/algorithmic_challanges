@@ -6,7 +6,8 @@ import ArgInput from "@/components/ArgInput.vue";
 import {useRouteSettings} from "@/storages";
 import ProblemDescription from "@/components/ProblemDescription.vue";
 import Solution from "@/components/Solution.vue";
-import Indented from "@/components/Indented.vue";
+import Indented from "@/components/elements/Indented.vue";
+import Spacer from "@/components/elements/Spacer.vue";
 
 
 const pageState = useRouteSettings()
@@ -15,7 +16,7 @@ const arg = ref(3);
 
 const args = computed(() => {
     return [{
-        name: "arg1",
+        name: "coinCount",
         kotlinType: "Int",
         kotlinTypeParser: (it: string) => `${it}.toInt()`,
         value: arg.value.toString()
@@ -71,20 +72,19 @@ onMounted(() => {
 
         </ProblemDescription>
 
-        <div style="height: 30px"/>
-
+        <Spacer height="30px"/>
         <ArgInput
             :fields="[formField]"
             :additional-args="optional"
         />
-        <div style="height: 30px"/>
+        <Spacer height="30px"/>
 
         <kotlin-integration
             :args="args"
             :unnamed-args="optional.map(({value}) => value)"
         />
 
-        <div style="height: 30px"/>
+        <Spacer height="30px"/>
 
         <Solution
             :parameters="solutionArgs"
@@ -92,16 +92,18 @@ onMounted(() => {
         >
             <p>
                 My solution doesn't focus that much on the function that actually searches the best result,
-                rather than the one that verifies each result and finds the best arrangement of the given coins to total different values.
+                rather than the one that verifies each result and finds the best arrange&shy;ment of the given coins to total different values.
             </p>
             <p>
                 For example:
-                <br/><Indented>coins = [1, 3, 8, 10, 40]; value = 27</Indented>
-                <br/><Indented>The 'intuitive' solution here would be [10, 10, 3, 3, 1]; size = 5.</Indented>
-                <br/><Indented>But theres a better one: [8, 8, 8, 3]; size = 4</Indented>
+                <br/><Indented>
+                    coins&nbsp;= [1, 3, 8, 10, 40]; value&nbsp;=&nbsp;27
+                    <br/>The 'intuitive' solution here would be [10, 10, 3, 3, 1]; size&nbsp;=&nbsp;5.
+                    <br/>But theres a better one: [8, 8, 8, 3]; size&nbsp;=&nbsp;4
+                </Indented>
             </p>
             <p>
-                To see the best combination of coins for the values, specify a set as the second parameter in the format of numbers seperated by commas.
+                To see the best combi&shy;nations of coins for the values, specify a set as the second parameter in the format of numbers seperated by commas.
             </p>
         </Solution>
 
@@ -117,7 +119,6 @@ onMounted(() => {
 
     padding-inline: 12%;
     padding-block-end: 18dvh;
-    overflow: visible;
 
     display: flex;
     flex-direction: column;

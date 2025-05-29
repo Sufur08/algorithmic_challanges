@@ -31,20 +31,21 @@ const state = useRouteSettings()
         flex-direction: column;
         overflow-x: hidden;
         width: 100dvw;
-        min-height: 100dvh;
+        height: 100dvh;
 
 
         & > main {
-            margin-top: inRange(12dvh, 34px, 100px);
+            margin-top: 3dvh;
 
         }
 
 
         & > header {
             z-index: 10000;
-            position: fixed;
-            height: inRange(12dvh, 34px, 100px);
+            position: sticky;
+            top: 0;
             width: 100dvw;
+            padding-block-start: 4px;
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -56,9 +57,16 @@ const state = useRouteSettings()
             }
 
             & > h1 {
+                margin: 0;
+                padding-inline: 4%;
                 text-shadow:
                     0 0 26px black,
                     0 0 36px black;
+                font-size: 2.75em;
+                text-align: center;
+                @include ifSmall {
+                    font-size: 2.25em;
+                }
             }
 
         }

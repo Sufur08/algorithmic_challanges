@@ -12,11 +12,13 @@ const props = defineProps({
 
 
 const windowSize = useWindowSize({ includeScrollbar: false });
+const minSize = computed(() => windowSize.width.value * 0.05 + 270)
 const width = computed(() => {
-    const minSize = windowSize.width.value * 0.05 + 270;
-    const objectsCount = Math.floor(windowSize.width.value / minSize);
+    const objectsCount = Math.floor(windowSize.width.value / minSize.value);
     return (windowSize.width.value / Math.max(objectsCount, 1)) + "px";
 })
+const minSizeWidthDif  = computed(() => `calc(${width.value} - ${minSize.value}px)`)
+const minSizePx = computed(() => `${minSize.value}px`)
 
 
 
@@ -62,8 +64,9 @@ const width = computed(() => {
             box-shadow:
                         0 0 8.4dvw -1dvw rgba(0, 0, 0, 0.55);
         }
-        height: 86%;
-        width: 86%;
+        $thisRawWidth: calc(v-bind(minSizePx) + v-bind(minSizeWidthDif) * .42);
+        height: min(86%, calc($thisRawWidth * 1.2));
+        width: min(86%, $thisRawWidth);
         box-shadow:
                     0 0 8.4dvw -1.4dvw rgba(0, 0, 0, 0.5);
         overflow: hidden;
@@ -72,13 +75,15 @@ const width = computed(() => {
         justify-content: center;
         align-items: center;
         position: relative;
-        border: 8px solid $accent1;
+        $border-thickness: max(8px, v-bind(width) * .0275);
+        border: $border-thickness solid $accent1;
 
-        border-radius: calc(v-bind(width) * .12);
+        $border-radius: calc(v-bind(width) * .12);
+        border-radius: $border-radius;
 
 
         &__inner-shadow {
-            border-radius: calc(v-bind(width) * .12 - 8px);
+            border-radius:  calc($border-radius - $border-thickness);
             box-sizing: border-box;
             position: absolute;
             top: 0;
@@ -115,10 +120,10 @@ const width = computed(() => {
             text-align: center;
         }
         & > h2 {
-            top: 28%;
+            margin-block-end: 30%;
             position: absolute;
             z-index: 10;
-            font-size: 2.4rem; // make dependent on vbind width
+            font-size: calc($thisRawWidth * .12);
             font-weight: 900;
             text-align: center;
         }

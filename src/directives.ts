@@ -66,8 +66,15 @@ export const vAnimatedIf = {
         const timeFactor = binding.modifiers.transitionTime ?? ([undefined, null, ""].includes(el.dataset.vRelativeTransition) ? .0013: Number(el.dataset.vRelativeTransition))
         const xTransitionTime = () => Math.max(0, binding.modifiers.transitionTime ?? (timeFactor * (el.scrollWidth - (measureCss(el, el.dataset.vBaseWidth) ?? 0))))
         const yTransitionTime = () => Math.max(0, binding.modifiers.transitionTime ?? (timeFactor * (el.scrollHeight - (measureCss(el, el.dataset.vBaseHeight) ?? 0))))
-        const before = { ...el.style, display: "" }
         const level = Number(el.dataset.vAnimatingIf) + 1
+        const before = { ...el.style, display: "" }
+        if (level == 1) {
+            el.dataset.vAnimIfPaddingBlock = before.paddingBlock;
+            el.dataset.vAnimIfMarginBlock = before.marginBlock;
+            el.dataset.vAnimIfPaddingInline = before.paddingInline;
+            el.dataset.vAnimIfMarginInline = before.marginInline;
+        }
+        console.log(before)
         el.dataset.vAnimatingIf = level
         const transitionString = (old: string = before.transition) => {
             const type = "cubic-bezier(0.25, 0, 0.75, 1)"
@@ -90,13 +97,13 @@ export const vAnimatedIf = {
         function setToExtended(height = binding.modifiers.height, width = binding.modifiers.width) {
             if (height) {
                 el.style.height = el.scrollHeight + 'px';
-                el.style.paddingBlock = before.paddingBlock;
-                el.style.marginBlock = before.marginBlock;
+                el.style.paddingBlock = el.dataset.vAnimIfPaddingBlock ?? before.paddingBlock;
+                el.style.marginBlock = el.dataset.vAnimIfMarginBlock ?? before.marginBlock;
             }
             if (width) {
                 el.style.width = el.scrollWidth + 'px';
-                el.style.paddingInline = before.paddingInline;
-                el.style.marginInline = before.marginInline;
+                el.style.paddingInline = el.dataset.vAnimIfPaddingInline ?? before.paddingInline;
+                el.style.marginInline = el.dataset.vAnimIfMarginInline ?? before.marginInline;
             }
         }
         console.log(binding)
@@ -124,17 +131,19 @@ export const vAnimatedIf = {
             })
         }
         function reset() {
-            if (el.dataset.vStillAnimating) return;
             el.style = before;
             el.dataset.vAnimatingIf = "0"
-//            delete el.dataset.vAnimatingIf;
+            delete el.dataset.vAnimIfPaddingBlock;
+            delete el.dataset.vAnimIfMarginBlock;
+            delete el.dataset.vAnimIfPaddingInline;
+            delete el.dataset.vAnimIfMarginInline;
         }
         el.style.overflow = "hidden";
         if (binding.value) {
             setTo0(binding.modifiers.height || binding.modifiers.thenHeight,
                 binding.modifiers.width || binding.modifiers.thenWidth);
             el.style.display = "";
-            el.style.transition = transitionString();
+            if (level == 1) el.style.transition = transitionString();
             if (binding.modifiers.thenHeight || binding.modifiers.thenWidth) {
                 doSecondary(true, () => {
                     doPrimary(true, reset);
@@ -145,7 +154,7 @@ export const vAnimatedIf = {
         } else {
             setToExtended(binding.modifiers.height || binding.modifiers.thenHeight,
                 binding.modifiers.width || binding.modifiers.thenWidth);
-            el.style.transition = transitionString();
+            if (level == 1) el.style.transition = transitionString();
             doPrimary( false, () => {
                 if (binding.modifiers.thenHeight || binding.modifiers.thenWidth) {
                     doSecondary(false, () => {
