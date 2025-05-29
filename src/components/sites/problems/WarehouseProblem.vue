@@ -13,7 +13,7 @@ const pageState = useRouteSettings()
 
 
 const length = ref(52)
-const duplicates = ref(0)
+const sets = ref(1)
 
 const kotlinArgs = computed(() => [{
     name: "length",
@@ -21,10 +21,10 @@ const kotlinArgs = computed(() => [{
     kotlinTypeParser: (it: string) => `${it}.toInt()`,
     value: length.value.toString(),
 }, {
-    name: "duplicates",
+    name: "sets",
     kotlinType: "Int",
     kotlinTypeParser: (it: string) => `${it}.toInt()`,
-    value: duplicates.value.toString(),
+    value: sets.value.toString(),
 }])
 
 const inputFields = [{
@@ -32,9 +32,9 @@ const inputFields = [{
     type: "number",
     value: length
 }, {
-    description: "Number of duplicates:",
+    description: "Number of sets:",
     type: "number",
-    value: duplicates
+    value: sets
 }]
 const anonymousArgs = ref([])
 
@@ -63,8 +63,8 @@ onMounted(() => {
                 Example: <br/>
                 <Indented>
                     After [1,&nbsp;2] we need to add a second storage for&nbsp;3
-                    <br/>[1, 2, 4, 7,&nbsp;8], [3,&nbsp;5,&nbsp;6] works
-                    <br/>[1, 2, 4, 7,&nbsp;8], [3,&nbsp;5, 6, 9,&nbsp;10] doesn't work because 6&nbsp;+&nbsp;3&nbsp;=&nbsp;9, so we need to add a third storage.
+                    <br/>[1, 2, 4,&nbsp;7], [3,&nbsp;5,&nbsp;6] works
+                    <br/>[1, 2, 4,&nbsp;7], [3,&nbsp;5, 6,&nbsp;8] doesn't work because 5&nbsp;+&nbsp;3&nbsp;=&nbsp;8, so we need to add a third storage.
                 </Indented>
             </p>
             <p class="problem-description__question">
@@ -89,8 +89,13 @@ onMounted(() => {
         />
         <Spacer height="30px"/>
 
-        <Solution code-file="" :parameters="[]">
+        <Solution
+            code-file="/kotlin/WarehouseProblem.kt"
+            :parameters="[]"
+        >
 
+
+            - insufficient idea: sum of highest two values + 1
         </Solution>
 
 

@@ -64,6 +64,7 @@ const minSizePx = computed(() => `${minSize.value}px`)
             box-shadow:
                         0 0 8.4dvw -1dvw rgba(0, 0, 0, 0.55);
         }
+        will-change: transform;
         $thisRawWidth: calc(v-bind(minSizePx) + v-bind(minSizeWidthDif) * .42);
         height: min(86%, calc($thisRawWidth * 1.2));
         width: min(86%, $thisRawWidth);
