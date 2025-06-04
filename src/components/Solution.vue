@@ -31,10 +31,9 @@ let codeContent = ref("[loading code]")
 
 onMounted(() => {
 
-    const regex = /object(?:[^}]*})+/
     const loadCode = async () => {
         const response = await fetch(window.location.pathname.split('/').slice(0, -1).join('/') + props.codeFile)
-        codeContent.value = "\n" + (await response.text()).match(regex)[0] + "\n"
+        codeContent.value = "\n" + (await response.text()).replace("package solutions", "").replace("import core.Solution", "").replace(/^\s+/, '') + "\n"
         return codeContent.value
     }
 
@@ -185,7 +184,10 @@ onMounted(() => {
             display: flex;
             flex-direction: column;
             align-items: stretch;
-            gap: .75em;
+
+            & p {
+                margin-block: .36em;
+            }
 
         }
 
