@@ -1,0 +1,10 @@
+
+
+polished responsive UI (ty)
+
+
+more devlogs (multiple times)
+more puzzles / solutions (multiple times)
+
+split code to run server-side    (i dont have a server-side)
+-> other feedback: coin-problem code runs forever

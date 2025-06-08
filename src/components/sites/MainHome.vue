@@ -16,7 +16,6 @@ import ProblemPreview from "@/components/ProblemPreview.vue";
 
     .mainHome {
         &__container {
-            padding-block-start: 4dvh;
             overflow: visible;
             display: flex;
             flex-direction: row;

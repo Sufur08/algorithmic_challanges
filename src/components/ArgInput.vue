@@ -225,6 +225,9 @@ function removeArg(index: number) {
         flex-direction: row;
         align-items: center;
         font-size: 1em;
+        @include ifSmall {
+            text-align: center;
+        }
     }
 
     &__container {

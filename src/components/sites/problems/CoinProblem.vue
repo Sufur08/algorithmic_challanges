@@ -24,7 +24,7 @@ const args = computed(() => {
 })
 
 const formField = {
-    description: "number of coins:",
+    description: "Number of coins:",
     type: "number",
     value: arg,
 }
@@ -32,11 +32,11 @@ const formField = {
 const optional = ref<{ name: string, value: string}[]>([])
 
 const solutionArgs = [{
-    description: "number of coins:",
+    description: "Number of coins:",
     type: "number",
     value: ref(3),
 }, {
-    description: "instead show solution of:",
+    description: "Instead show solution of:",
     type: "text",
     value: ref(null)
 }]
@@ -118,7 +118,7 @@ onMounted(() => {
 .coin-problem {
 
     padding-inline: 12%;
-    padding-block-end: 18dvh;
+    padding-block-end: 8dvh;
 
     display: flex;
     flex-direction: column;

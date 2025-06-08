@@ -2,6 +2,7 @@
 
 
 import {useRouteSettings} from "@/storages";
+import WithOverlayScrollbar from "@/components/elements/WithOverlayScrollbar.vue";
 
 const state = useRouteSettings()
 
@@ -11,7 +12,10 @@ const state = useRouteSettings()
 
 <template>
 
-    <div class="app__container">
+    <with-overlay-scrollbar
+        clazz="app__container"
+        sizer-class="app__sizer"
+    >
         <header>
             <h1>{{ state.header }}</h1>
         </header>
@@ -19,24 +23,31 @@ const state = useRouteSettings()
         <main class="">
             <RouterView/>
         </main>
-    </div>
+
+        <footer>
+
+            About
+        </footer>
+    </with-overlay-scrollbar>
 
 </template>
 
 <style lang="scss">
     @import "./assets/variables.scss";
 
+    .app__sizer {
+        width: 100dvw;
+        height: 100dvh;
+    }
+
     .app__container {
         display: flex;
         flex-direction: column;
-        overflow-x: hidden;
-        width: 100dvw;
-        height: 100dvh;
 
 
         & > main {
-            margin-top: 3dvh;
-
+            margin-block-start: 4dvh;
+            margin-block-end: 10dvh;
         }
 
 
@@ -68,6 +79,22 @@ const state = useRouteSettings()
                     font-size: 2.25em;
                 }
             }
+
+        }
+
+        & > footer {
+            background-color: $accent1;
+            width: 100dvw;
+            margin-block-start: auto;
+            border-block-start: $blackAccent solid 2px;
+            padding-block: 120px;
+
+            display: flex;
+            justify-content: center;
+
+
+            color: $blackAccent;
+//            font-weight: bold;
 
         }
 

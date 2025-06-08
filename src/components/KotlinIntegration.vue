@@ -331,6 +331,10 @@ function resetCode() {
             max-height: 42dvh;
         }
 
+        & .CodeMirror-scrollbar-filler {
+            background-color: transparent;
+        }
+
     }
 
     &__options-container {
