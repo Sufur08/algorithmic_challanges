@@ -6,18 +6,19 @@ import List from "@/components/elements/List.vue";
 import KotlinIntegration from "@/components/KotlinIntegration.vue";
 import ArgInput from "@/components/ArgInput.vue";
 import Spacer from "@/components/elements/Spacer.vue";
+import Solution from "@/components/Solution.vue";
 
 
 const pageState = useRouteSettings()
 
+function getTable(tableNumber: number) {
+    return tableNumber % 2 == 1
+        ? "A,G|D,E|B,C,F,H\nA,B,C,D,F,G||E\nA,B,C,E,G|D|F,H\nA,B,C,E,F,G,H||D|\nA|B,C,D,E,F,H|G\nA,B,C,D,E,G,H||F\nA,B,D,E,F,G||C\n||A,B,C,D,E,F,G,H"
+        : "A,B,F,G,I,J,L|C,D,H|E,K\nA,C,D,E,F,G,H,I,J,K,L||B\nB,C,D,E,F,G,H,I,J,K,L||A\nA,B,f,g,i,j,l|c,e,k|d,h\nA,B,D,E,F,g,H,i,j,k,l||c\nA,B,C,D,E,G,H,I,J,K,L||F\nA,B,C,E,F,G,H,I,J,K,L||D\nd,e,h,j,k|c|A,B,F,G,i,l\na,b,f,g,i,j,l|c,d,h,k|E\n||A,B,C,D,E,F,G,H,I,J,K,L\nA,B,C,D,E,H,I,J,K,L||f,g\nA,B,D,E,F,G,H,J,K,L|c|i"
+}
+
 const tableNumber = ref(1)
-const table = computed(() => {
-    if (tableNumber.value % 2 === 1) {
-        return "A,G|D,E|B,C,F,H\nA,B,C,D,F,G||E\nA,B,C,E,G|D|F,H\nA,B,C,E,F,G,H||D|\nA|B,C,D,E,F,H|G\nA,B,C,D,E,G,H||F\nA,B,D,E,F,G||C\n||A,B,C,D,E,F,G,H"
-    } else {
-        return "table2"
-    }}
-)
+const table = computed(() => getTable(tableNumber.value))
 const hiddenOutsideMain = `data class TableRow(
     var unaffected: List\<\String>,
     var affected: List<String>,
@@ -40,9 +41,9 @@ println(table.toText())`
 const kotlinArgs = computed(() => [{
     name: "table",
     kotlinType: `List\<\TableRow>`,
-    kotlinTypeParser: (it: string) => `try { ${it}.split("\\n").map { row ->
-    val split = row.split("|").map { it.uppercase().split(",") }
-    TableRow(split[0], split[1], split[2])
+    kotlinTypeParser: (it: string) => `try { args[0].uppercase().split("\\n").map { row ->
+            val split = row.split("|").map { it.uppercase().split(",").filter { str -> str.isNotEmpty() } }
+            TableRow(split[0], split[1], split[2])
 } } catch (e: IndexOutOfBoundsException) { throw Exception("wrong input format", e) }`,
     value: table.value,
 }])
@@ -55,9 +56,10 @@ const inputFields = [{
 const anonymousArgs = ref([])
 
 const solutionArgs = [{
-    description: "Max number of brute force tries:",
+    description: "Table one or two:",
     type: "number",
-    value: ref(300000)
+    value: ref(1),
+    mapper: (input: any) => isNaN(Number(input ?? "noNumber")) ? "got invalid input" : getTable(Number(input))
 }]
 
 
@@ -91,6 +93,7 @@ onMounted(() => {
             <p>
                 Find one graph (or more if you want) matching the given table.
                 <br>All facilities are connected to one graph.
+                <br>The second graph contains a cycle, but still, no facilities have connections directly back to each other.
             </p>
 
         </ProblemDescription>
@@ -112,7 +115,14 @@ onMounted(() => {
             :unnamed-args="anonymousArgs.map(({value}) => value)"
         />
 
-        <!-- rest -->
+        <Spacer height="30px"/>
+
+        <Solution
+            code-file="kotlin/SupplyChainProblem.kt"
+            :parameters="solutionArgs"
+        >
+            text
+        </Solution>
     </div>
 </template>
 

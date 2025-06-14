@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<{
         description: string,
         type: string,
         value: Ref<any>,
+        mapper?: (input: any) => string,
     }[],
     overflowWidth?: string,
 }>(), {
@@ -33,7 +34,7 @@ onMounted(() => {
 
     const loadCode = async () => {
         const response = await fetch(window.location.pathname.split('/').slice(0, -1).join('/') + props.codeFile)
-        codeContent.value = "\n" + (await response.text()).replace("package solutions", "").replace("import core.Solution", "").replace(/^\s+/, '') + "\n"
+        codeContent.value = (await response.text()).replace("package solutions", "").replace("import core.Solution", "").replace(/^\s+/, '') + "\n"
         return codeContent.value
     }
 
@@ -86,7 +87,7 @@ onMounted(() => {
                     horizontal-expend="12.5dvw"
                     :hidden-dependency="`package core; interface Solution { fun entryPoint(vararg args: String) }`"
                     :dependencies="['core.Solution']"
-                    :unnamed-args="parameters.map(({value}) => value.value?.toString()).filter((it) => it != null)"
+                    :unnamed-args="parameters.map(({value, mapper}) => mapper ? mapper(value.value) : value.value?.toString()).filter((it) => it != null)"
                     :editable="false"
                     :hide-stuff="false"
                     :hidden-outside-main="codeContent"

@@ -326,9 +326,24 @@ function resetCode() {
         & .output {
             overflow-wrap: break-word;
         }
+        & .output-wrapper {
+            padding-inline-end: 3px;
+            padding-block-end: 1px;
+            border-bottom: 1px solid gray;
+        }
         & .code-output {
             white-space: pre-wrap;
             max-height: 42dvh;
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: rgba(0,0,0,0.3);
+                border-radius: 4px;
+            }
         }
 
         & .CodeMirror-scrollbar-filler {

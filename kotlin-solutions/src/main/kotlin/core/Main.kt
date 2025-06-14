@@ -13,9 +13,9 @@ import kotlin.time.toDuration
 
 fun main() {
 
-//    measureTime {
-//        SupplyChainProblem.entryPoint("A,G|D,E|B,C,F,H\nA,B,C,D,F,G||E\nA,B,C,E,G|D|F,H\nA,B,C,E,F,G,H||D|\nA|B,C,D,E,F,H|G\nA,B,C,D,E,G,H||F\nA,B,D,E,F,G||C\n||A,B,C,D,E,F,G,H")
-//    }.run { println(this) }
+    measureTime {
+        SupplyChainProblem.entryPoint("A,G|D,E|B,C,F,H\nA,B,C,D,F,G||E\nA,B,C,E,G|D|F,H\nA,B,C,E,F,G,H||D|\nA|B,C,D,E,F,H|G\nA,B,C,D,E,G,H||F\nA,B,D,E,F,G||C\n||A,B,C,D,E,F,G,H")
+    }.run { println(this) }
     measureTime {
         SupplyChainProblem.entryPoint("A,B,F,G,I,J,L|C,D,H|E,K\nA,C,D,E,F,G,H,I,J,K,L||B\nB,C,D,E,F,G,H,I,J,K,L||A\nA,B,f,g,i,j,l|c,e,k|d,h\nA,B,D,E,F,g,H,i,j,k,l||c\nA,B,C,D,E,G,H,I,J,K,L||F\nA,B,C,E,F,G,H,I,J,K,L||D\nd,e,h,j,k|c|A,B,F,G,i,l\na,b,f,g,i,j,l|c,d,h,k|E\n||A,B,C,D,E,F,G,H,I,J,K,L\nA,B,C,D,E,H,I,J,K,L||f,g\nA,B,D,E,F,G,H,J,K,L|c|i")
     }.run { println(this) }
