@@ -76,9 +76,9 @@ onMounted(() => {
     <div class="supply-chain-problem">
         <ProblemDescription>
             <p>
-                A company has multiple distribution centers, warehouses, and regional hubs
+                A company has multiple distri&shy;bution centers, warehouses, and regional hubs
                 connected through a supply chain network purely with one-directional connections.
-                <br>The company wants to develop a logistic network matching a given requirement report.
+                <br>The company wants to develop a logistic network matching a given require&shy;ment report.
             </p>
             <p>
                 This report analyzes: "What would happen if we had to shut down each facility?"
@@ -87,13 +87,14 @@ onMounted(() => {
                 <List>
                     <li>Unaffected facilities</li>
                     <li>Facilities with degraded service (facilities that would lose some but not all supply paths)</li>
-                    <li>Facilities that would be forced to close (facilities that are 100% dependent on the closed facility)</li>
+                    <li>Facilities that would be forced to close (facilities that are 100&nbsp;% dependent on the closed facility)</li>
                 </List>
             </p>
             <p>
                 Find one graph (or more if you want) matching the given table.
                 <br>All facilities are connected to one graph.
                 <br>The second graph contains a cycle, but still, no facilities have connections directly back to each other.
+                <br>Tip: You might want to solve it first manually or look into my recon&shy;structed graph to draw a visuali&shy;zation of one possible solution.
             </p>
 
         </ProblemDescription>
@@ -118,10 +119,28 @@ onMounted(() => {
         <Spacer height="30px"/>
 
         <Solution
-            code-file="kotlin/SupplyChainProblem.kt"
+            code-file="/kotlin/SupplyChainProblem.kt"
             :parameters="solutionArgs"
         >
-            text
+            <p>
+                My code works on the both presets, but I haven't tested it on more.
+                <br>It first finds out which row of the table represents which node in the graph and creates a Graph with nodes that contain the information about which other nodes they affect.
+                <br>Then, I chaotically loop through the nodes three times, adding targets to them. (it was just trial and error to get to this arrange&shy;ment)
+            </p>
+            <p>
+                The console output is
+                <List>
+                    <li>The recon&shy;structed table from the argument string</li>
+                    <li>The nodes of the final graph (with their targets)</li>
+                    <li>The connection of the final graph</li>
+                </List>
+                Each seperated by an empty line.
+            </p>
+            <p>
+                There are 18 possible solutions for the first one and 140 for the second one.
+                <br>I validated my own solutions when I thought they might be done by drawing the graph and creating the table based on my graph.
+                It should equal the original table.
+            </p>
         </Solution>
     </div>
 </template>

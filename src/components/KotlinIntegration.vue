@@ -345,6 +345,9 @@ function resetCode() {
                 border-radius: 4px;
             }
         }
+        & .executable-fragment-wrapper {
+            margin-block-end: 30px;
+        }
 
         & .CodeMirror-scrollbar-filler {
             background-color: transparent;

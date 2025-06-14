@@ -185,10 +185,7 @@ onMounted(() => {
             display: flex;
             flex-direction: column;
             align-items: stretch;
-
-            & p {
-                margin-block: .36em;
-            }
+            gap: 1.2em;
 
         }
 
