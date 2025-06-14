@@ -45,7 +45,6 @@ object SupplyChainProblem: Solution
         var dependent: MutableList<Node> = arrayListOf(),
     )
     {
-        val finished = false
         val dependAndAffected get() = dependent + affects
         fun unaffected(of: List<Node>): List<Node> = ArrayList(of).apply { removeAll(affects); removeAll(dependent); remove(this@Node) }
         fun measureDependAffect(): ArrayList<Node> = ArrayList<Node>().apply {
@@ -66,8 +65,6 @@ object SupplyChainProblem: Solution
         val nodes: ArrayList<Node> = arrayListOf(),
     )
     {
-        fun addNode(name: String): Node =
-            nodes.find { it.name == name } ?: Node(name).apply { nodes.add(this) }
         fun addNode(node: Node) =
             nodes.find { it.name == node.name } ?: nodes.add(node)
         fun allConnections(): List<String> = nodes.fold(listOf()) { acc, node -> acc + node.targets.names().map { node.name + it } }
