@@ -1,7 +1,6 @@
 package solutions
 
 import core.Solution
-import solutions.SupplyChainProblem.Node.Companion.names
 import kotlin.math.max
 
 data class TableRow(
@@ -31,14 +30,17 @@ object SupplyChainProblem: Solution
             TableRow(split[0], split[1], split[2])
         } } catch (e: IndexOutOfBoundsException) { throw Exception("wrong input format", e) }
 
-        println(table.toText())
-        findGraph(table)
+        println(table.toText() + "\n")
+        findGraph(table).let {
+            println(it)
+            println()
+            println(it.allConnections().joinToString(", "))
+        }
     }
 
     class Node(
         val name: String,
-        var targets: MutableList<Node> = arrayListOf(),
-        //val sources: ArrayList<Node> = arrayListOf(),
+        var targets: MutableSet<Node> = mutableSetOf(),
         var affects: MutableList<Node> = arrayListOf(),
         var dependent: MutableList<Node> = arrayListOf(),
     )
@@ -59,10 +61,6 @@ object SupplyChainProblem: Solution
             recursive(this@Node)
         }
         override fun toString(): String = "Node $name: targets: ${targets.names()}, affects: ${affects.names()}, dependent: ${dependent.names()}"
-        companion object
-        {
-            public fun Collection<Node>.names() = map { it.name }
-        }
     }
     class Graph(
         val nodes: ArrayList<Node> = arrayListOf(),
@@ -76,9 +74,9 @@ object SupplyChainProblem: Solution
         operator fun get(name: String): Node? = nodes.find { it.name == name }
         override fun toString(): String = "${super.toString()}: nodes: \n${nodes.joinToString("\n")}"
     }
+    fun Collection<Node>.names() = map { it.name }
 
-
-    fun findGraph(table: List<TableRow>)
+    fun findGraph(table: List<TableRow>): Graph
     {
         val all: HashMap<String, Node> = hashMapOf(*table.first().run { unaffected + affected + dependent }.map { it to Node(it) }.toTypedArray())
         fun doForNew(node: Node, row: TableRow, graph: Graph)
@@ -86,13 +84,8 @@ object SupplyChainProblem: Solution
             node.affects.addAll(row.affected.map { all[it]!! })
             node.dependent.addAll(row.dependent.filter { it != node.name }.map { all[it]!! })
             graph.addNode(node)
-            /*
-            if (row.unaffected.size == 1) all[row.unaffected.first()]!!.targets.add(node)
-            if (row.dependent.size == 2) node.targets.add(all[row.dependent[1]]!!)
-
-             */
         }
-        val graph = Graph().apply {
+        return Graph().apply {
             var ref = mutableMapOf(*table.mapIndexed { index, row -> index to row.dependent }.toTypedArray())
             for (reps in 1..table.size)
             {
@@ -108,44 +101,34 @@ object SupplyChainProblem: Solution
             }
             if (ref.isNotEmpty()) throw Exception("this table is none of my presets")
 
-            println(this)
-
+            val closed = mutableListOf<Node>()
             nodes.forEach { node ->
-                node.targets.addAll(node.affects.filter { affected ->
-                    node.dependAndAffected.none { affected in it.dependAndAffected }
-                })
                 node.targets.addAll(node.dependent.filter { affected ->
                     node.dependent.none { affected in it.dependAndAffected }
+                })
+                closed.addAll(node.targets)
+                node.targets.addAll(node.affects.filter { affected ->
+                    node.dependAndAffected.none { affected in it.dependAndAffected }
                 })
             }
             nodes.forEach { node ->
                 node.affects.forEach { affected ->
-                    if (node.affects.none { affected in it.dependAndAffected })
-                        node.unaffected(all.values.toList()).filter { affected in it.dependAndAffected && node !in it.dependAndAffected }.let { ref ->
-                            val reduced = ref.filter { refEl ->
-                                refEl.dependAndAffected.none { it in (ref - refEl) }
-                                //(ref - refEl).none { refEl in it.dependAndAffected }
-                            }
-                            reduced.forEach { it.targets.add(affected) }
-//                            if (reduced.size == 1)
-//                                reduced.first().targets.add(affected)
-                        }
-
-                    /*
-                    if (affected !in node.measureDependAffect())
+                    if (affected !in node.measureDependAffect() && affected !in closed && node !in affected.targets)
                         node.targets.add(affected)
-
-                    // */
                 }
             }
-
-
-
-            println(this)
-            println(this.allConnections().joinToString(", "))
-
+            nodes.forEach { node ->
+                node.affects.forEach { affected ->
+                    if (affected in closed) return@forEach
+                    if (node.affects.none { affected in it.dependAndAffected && node !in it.dependAndAffected })
+                        node.unaffected(all.values.toList()).filter { affected in it.dependAndAffected && it !in affected.measureDependAffect() }.let { ref ->
+                            val reduced = ref.filter { refEl ->
+                                refEl.dependAndAffected.none { it in (ref - refEl) }
+                            }
+                            reduced.forEach { it.targets.add(affected) }
+                        }
+                }
+            }
         }
     }
-
-
 }
