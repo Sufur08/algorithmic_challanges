@@ -8,12 +8,14 @@ import CoinProblem from "@/components/sites/problems/CoinProblem.vue";
 import {createPinia} from "pinia";
 import {applyDirectives} from "@/directives";
 import WarehouseProblem from "@/components/sites/problems/WarehouseProblem.vue";
+import SupplyChainProblem from "@/components/sites/problems/SupplyChainProblem.vue";
 
 const routes = [
     { path: "/", component: MainHome },
     { path: "/:catchAll(.*)", component: MainHome},
     { path: "/coin-problem", component: CoinProblem },
-    { path: "/warehouse-problem", component : WarehouseProblem }
+    { path: "/warehouse-problem", component : WarehouseProblem },
+    { path: "/supply-chain-problem", component: SupplyChainProblem },
 ]
 
 

@@ -1,6 +1,6 @@
 <script setup lang="ts" xmlns="http://www.w3.org/1999/html">
 
-import {ref, Ref} from "vue";
+import {computed, onUnmounted, ref, Ref, WritableComputedRef} from "vue";
 import CloseX from "@/../public/CloseX.vue";
 import {vFocus, vFocusEnd} from "@/directives";
 
@@ -16,14 +16,39 @@ const props = withDefaults(defineProps<{
     additionalArgs: undefined,
 })
 
-const optionalArgsExtra: Ref<Array<{ hovered: boolean, nameChanged: boolean }>> = ref([])
+const optionalArgsExtra: Ref<Array<{ hovered: boolean, nameChanged: boolean, lines: number, mirror?: HTMLElement }>> = ref([])
+
+const textareaRef: (index: number) => WritableComputedRef<string> = (index: number) => computed({
+    get: () => props.additionalArgs[index].name,
+    set: (value: string) => { props.additionalArgs[index].name = value.replace(/\n/g, '')}
+})
+const linesOf: (el: HTMLElement) => number = (el: HTMLElement) => {
+    if (!el) return 1;
+    const temp = document.createElement('span')
+    temp.style.position = 'absolute'
+    temp.style.visibility = 'hidden'
+    temp.innerText = '1'
+    el.appendChild(temp)
+    const lineHeight = parseFloat(getComputedStyle(temp).height)
+    el.removeChild(temp)
+    return Math.round(el.scrollHeight / lineHeight);
+}
+const mirrorObserver: ResizeObserver = new ResizeObserver((entries) => {
+    entries.forEach(entry => {
+        optionalArgsExtra.value.forEach((it) => {
+            if (it.mirror == entry.target as HTMLElement) {
+                it.lines = linesOf(it.mirror)
+            }
+        })
+    })
+});
 
 function addArg() {
+    optionalArgsExtra.value.push({ hovered: false, nameChanged: false, lines: 1 })
     props.additionalArgs.push({
         name: `arg${props.additionalArgs.length + 1 + props.fields.length}`,
         value: ""
     })
-    optionalArgsExtra.value.push({ hovered: false, nameChanged: false })
 }
 
 function removeArg(index: number) {
@@ -35,6 +60,10 @@ function removeArg(index: number) {
                 props.additionalArgs[i].name = `arg${i + 1 + props.fields.length}`
     })
 }
+
+onUnmounted(() => {
+    mirrorObserver.disconnect()
+})
 
 </script>
 
@@ -65,21 +94,28 @@ function removeArg(index: number) {
         <span
             class="arg-input arg-input__custom-arg"
             v-if="additionalArgs"
-            v-for="{ arg, index } in additionalArgs.map((it, i) => ({ arg: it, index: i }))"
+            v-for="{ arg, index, name } in additionalArgs.map((it, i) => ({ arg: it, index: i, name: textareaRef(i) }))"
         >
             <span
                 class="arg-input__arg-name-container"
                 >
-                <span class="arg-input__description arg-input__arg-name-mirror">
-                    {{arg.name}}
+                <span
+                    class="arg-input__description arg-input__arg-name-mirror"
+                    :ref="el => {
+                        if (!optionalArgsExtra[index].mirror) mirrorObserver.observe(el as HTMLElement)
+                        optionalArgsExtra[index].lines = linesOf(el as HTMLElement)
+                        optionalArgsExtra[index].mirror = el as HTMLElement
+                    }"
+                >
+                    {{name}}
                 </span>
                 <textarea
                     type="text"
                     class="arg-input__description arg-input__arg-name-input"
-                    v-model="arg.name"
+                    v-model="name.value"
                     spellcheck="false"
                     @keydown.enter.prevent
-                    rows="1"
+                    :rows="optionalArgsExtra[index].lines"
                 />
             </span>
             <span class="arg-input__input-container">

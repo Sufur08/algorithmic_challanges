@@ -50,8 +50,8 @@ const props = withDefaults(defineProps<{
 
 
 const startingCode = computed(() =>
-`${props.dependencies.filter((it: string) => it != "").map((it: string) => `import ${it}`).join("\n")}
-${props.hiddenOutsideMain}
+`${props.dependencies.filter((it: string) => it != "").map((it: string) => `import ${it}\n`).join("")}
+${props.hiddenOutsideMain ?? "" !== "" ? props.hiddenOutsideMain + "\n"  : ""}
 fun main(args: Array\<\String\>\) {${props.hiddenInMain ? "\n" + props.hiddenInMain : ""}${props.hideStuff ? "\n//sampleStart" : ""}
     ${props.args.length > 0 ? props.args.map((value, index) => (
         `var ${value.name}: ${value.kotlinType} = ${value.kotlinTypeParser(`args[${index}]`)}`

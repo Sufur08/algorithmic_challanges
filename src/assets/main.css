@@ -67,6 +67,9 @@ input, textarea {
         outline: none;
     }
 }
+img {
+    user-select: none;
+}
 * {
     box-sizing: border-box;
     overflow: visible;

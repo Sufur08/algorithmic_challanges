@@ -103,7 +103,8 @@ onMounted(() => {
                 </Indented>
             </p>
             <p>
-                To see the best combi&shy;nations of coins for the values, specify a set as the second parameter in the format of numbers seperated by commas.
+                To see the best combi&shy;nations of coins for the values, specify a set for the second parameter in the format of numbers seperated by commas.
+                <br>Calculating the solution for 5 coins takes a while and for 6 even longer.
             </p>
         </Solution>
 

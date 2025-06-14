@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: start;
     gap: 1.2em;
 
 //    color: #243535;

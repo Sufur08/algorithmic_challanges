@@ -47,6 +47,7 @@ class OverlayScrollbar {  // mostly AI and I didn't want to fully unwrap this cl
     private hideTimeout: any;
     private dragStartY: any;
     private dragStartTop: number;
+    private observer: ResizeObserver;
     constructor() {
         this.container = container.value;
         this.content = content.value;
@@ -106,16 +107,14 @@ class OverlayScrollbar {  // mostly AI and I didn't want to fully unwrap this cl
             }
         });
 
-        // Window resize
-        window.addEventListener('resize', () => {
-            this.updateThumb();
-        });
+        this.observer = new ResizeObserver(() => { this.updateThumb(); });
+        this.observer.observe(this.content);
     }
 
     updateThumb() {
         requestAnimationFrame(() => {
             const contentHeight = this.content.scrollHeight;
-            const containerHeight = this.content.clientHeight;
+            const containerHeight = this.container.clientHeight;
             const scrollTop = this.container.scrollTop;
 
             if (contentHeight <= containerHeight) {
@@ -162,7 +161,7 @@ class OverlayScrollbar {  // mostly AI and I didn't want to fully unwrap this cl
         const deltaY = e.clientY - this.dragStartY;
         const newTop = this.dragStartTop + deltaY;
 
-        const containerHeight = this.content.clientHeight;
+        const containerHeight = this.container.clientHeight;
         const thumbHeight = this.thumb.offsetHeight;
         const maxTop = containerHeight * 0.9 - thumbHeight;
 
@@ -185,7 +184,7 @@ class OverlayScrollbar {  // mostly AI and I didn't want to fully unwrap this cl
         const rect = this.scrollbar.getBoundingClientRect();
         const clickY = e.clientY - rect.top;
 
-        const containerHeight = this.content.clientHeight;
+        const containerHeight = this.container.clientHeight;
         const thumbHeight = this.thumb.offsetHeight;
         const maxTop = containerHeight * 0.9 - thumbHeight;
 
@@ -253,7 +252,7 @@ onMounted(() => {
     }
 
     &__content {
-        height: 100%;
+        height: fit-content;
     }
 
 

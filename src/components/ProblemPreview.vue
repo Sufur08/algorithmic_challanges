@@ -8,6 +8,7 @@ const props = defineProps({
     img: String,
     title: String,
     linkTo: String,
+    imgAltText: String,
 })
 
 
@@ -33,8 +34,7 @@ const minSizePx = computed(() => `${minSize.value}px`)
 
             <h2>{{title}}</h2>
 
-            
-            <img :src="img" alt="img of coins with different values"/>
+            <img :src="img" :alt="imgAltText"/>
 
         </router-link>
     </div>
@@ -92,9 +92,10 @@ const minSizePx = computed(() => `${minSize.value}px`)
             width: 100%;
             height: 100%;
             box-shadow: inset 0 0 1dvw .2dvw rgba(0, 0, 0, 0.5);
+            opacity: .9;
             @media (hover: hover) {
                 &:hover::before {
-                    opacity: .8;
+                    opacity: .75;
                 }
             }
             &::before {
@@ -127,6 +128,7 @@ const minSizePx = computed(() => `${minSize.value}px`)
             font-size: calc($thisRawWidth * .12);
             font-weight: 900;
             text-align: center;
+            text-shadow: 0 0 1dvw rgba(0, 0, 0, 0.36);
         }
 
 

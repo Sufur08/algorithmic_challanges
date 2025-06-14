@@ -112,7 +112,7 @@ const showMoreSolutions = ref(false)
             <p>
                 This code finds the most ideal solutions (I&nbsp;think) but takes quite long to execute on higher inputs.
                 <br>For example 19,&nbsp;2 may finish within seconds and 20,&nbsp;2 takes ~1:25 minutes.
-                But if the order in which possibil&shy;ities are tested differs even 19, 2 might take millions of tries to finish.
+                    But if the order in which possibil&shy;ities are tested differs even 19, 2 might take millions of tries to finish.
                 <br>For one set, the point, where the runtime increases dramati&shy;cally is around&nbsp;60.
                 <br>To find a solution within reason&shy;able runtime, you can specify a number ot limit the attempts spend on each amount of containers.
                 This probably brings worse solutions than an efficiency focused algorithm would calculate.
@@ -138,12 +138,12 @@ const showMoreSolutions = ref(false)
                     <p>
                         Two sets of 65 articles fit in 6&nbsp;containers:<br>
                         <Indented>
-                            I: [1, 3, 5, 10, 14, 16, 18, 20, 22, 29, 31, 44, 48, 50, 52,&nbsp;56]
-                            <br>II: [2, 8, 12, 13, 16, 27, 32, 33, 38, 42,&nbsp;52]
-                            <br>III: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 29, 35, 37, 41, 43, 45, 47, 49, 53,&nbsp;55]
-                            <br>IV: [24, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 44, 45, 46, 48, 49, 50, 51,&nbsp;53]
-                            <br>V: [2, 6, 10, 18, 19, 22, 26, 27, 30, 34, 43, 47, 51, 54, 55, 58,&nbsp;59]
-                            <br>VI: [4, 7, 12, 14, 15, 17, 20, 25, 28, 36, 46, 54,&nbsp;57]
+                            I: [1,&nbsp;3, 5, 10, 14, 16, 18, 20, 22, 29, 31, 44, 48, 50, 52,&nbsp;56]
+                            <br>II: [2,&nbsp;8, 12, 13, 16, 27, 32, 33, 38, 42,&nbsp;52]
+                            <br>III: [1,&nbsp;3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 29, 35, 37, 41, 43, 45, 47, 49, 53,&nbsp;55]
+                            <br>IV: [24,&nbsp;28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 44, 45, 46, 48, 49, 50, 51,&nbsp;53]
+                            <br>V: [2,&nbsp;6, 10, 18, 19, 22, 26, 27, 30, 34, 43, 47, 51, 54, 55, 58,&nbsp;59]
+                            <br>VI: [4,&nbsp;7, 12, 14, 15, 17, 20, 25, 28, 36, 46, 54,&nbsp;57]
                         </Indented>
                     </p>
                 </div>
