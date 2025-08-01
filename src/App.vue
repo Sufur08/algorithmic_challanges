@@ -3,6 +3,8 @@
 
 import {useRouteSettings} from "@/storages";
 import WithOverlayScrollbar from "@/components/elements/WithOverlayScrollbar.vue";
+import MyFooter from "@/components/MyFooter.vue";
+import Home from "../public/Home.vue";
 
 const state = useRouteSettings()
 
@@ -17,6 +19,9 @@ const state = useRouteSettings()
         sizer-class="app__sizer"
     >
         <header>
+            <router-link to="/" class="app__header__home-icon-wrapper">
+                <Home :color="'#477575'" class="app__header__home-icon"/>
+            </router-link>
             <h1>{{ state.header }}</h1>
         </header>
 
@@ -25,8 +30,7 @@ const state = useRouteSettings()
         </main>
 
         <footer>
-
-            About
+            <MyFooter/>
         </footer>
     </with-overlay-scrollbar>
 
@@ -69,6 +73,7 @@ const state = useRouteSettings()
 
             & > h1 {
                 margin: 0;
+                margin-inline: calc(4em / 2.75);
                 padding-inline: 4%;
                 text-shadow:
                     0 0 26px black,
@@ -82,19 +87,28 @@ const state = useRouteSettings()
 
         }
 
+        & .app__header__home-icon {
+            height: 3.8em;
+            filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, .75));
+            &-wrapper {
+                height: 3.3em;
+                width: 3.3em;
+                padding: .4em;
+                overflow: visible;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                left: 1dvw;
+                align-self: start;
+            }
+        }
+
         & > footer {
             background-color: $accent1;
             width: 100dvw;
             margin-block-start: auto;
             border-block-start: $blackAccent solid 2px;
-            padding-block: 120px;
-
-            display: flex;
-            justify-content: center;
-
-
-            color: $blackAccent;
-//            font-weight: bold;
 
         }
 

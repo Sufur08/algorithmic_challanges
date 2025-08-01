@@ -10,7 +10,7 @@ export const useRouteSettings = defineStore("routeSettings", () => {
     const router = useRouter();
 
     function reset() {
-        header.value = "Header"
+        header.value = "Algorithmic Challenges"
     }
 
     watch(

@@ -1,14 +1,7 @@
 # algorithmic_challanges
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
+typo: *Challenges
+I've never done a Readme before, I'll try following the template
 
 ## Project Setup
 
@@ -22,8 +15,20 @@ npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Other npm scripts
 
+build
 ```sh
 npm run build
 ```
+move kotlin files into the website directory
+(is called automatically for build and dev)
+```sh
+npm run build
+```
+
+## To Develop Kotlin
+
+I hope you can easily set this up using the Gradle files in kotlin-solutions
+I don't know any general command line commands, I do it with the IDE.
+
