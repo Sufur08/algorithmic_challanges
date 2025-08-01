@@ -1,6 +1,7 @@
 # algorithmic_challanges
 
 typo: *Challenges
+
 I've never done a Readme before, I'll try following the template
 
 ## Project Setup
@@ -24,7 +25,7 @@ npm run build
 move kotlin files into the website directory
 (is called automatically for build and dev)
 ```sh
-npm run build
+npm run move-kotlin
 ```
 
 ## To Develop Kotlin
