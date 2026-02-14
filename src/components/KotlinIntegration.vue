@@ -135,7 +135,7 @@ onMounted(() => {
                     //   console.log("return: " + runWithParams(code, ["20"]))
                 },
                 getInstance: (it) => {
-                    console.log(it);
+                    // console.log(it);
                     instance = it;
                 },
                 callback: () => {

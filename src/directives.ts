@@ -74,7 +74,7 @@ export const vAnimatedIf = {
             el.dataset.vAnimIfPaddingInline = before.paddingInline;
             el.dataset.vAnimIfMarginInline = before.marginInline;
         }
-        console.log(before)
+        // console.log(before)
         el.dataset.vAnimatingIf = level
         const transitionString = (old: string = before.transition) => {
             const type = "cubic-bezier(0.25, 0, 0.75, 1)"
@@ -106,7 +106,7 @@ export const vAnimatedIf = {
                 el.style.marginInline = el.dataset.vAnimIfMarginInline ?? before.marginInline;
             }
         }
-        console.log(binding)
+        // console.log(binding)
         function doPrimary(extend: boolean, after: () => any) {
             requestAnimationFrame(() => {
                 extend ? setToExtended() : setTo0();

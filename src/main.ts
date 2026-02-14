@@ -9,6 +9,7 @@ import {createPinia} from "pinia";
 import {applyDirectives} from "@/directives";
 import WarehouseProblem from "@/components/sites/problems/WarehouseProblem.vue";
 import SupplyChainProblem from "@/components/sites/problems/SupplyChainProblem.vue";
+import About from "@/components/sites/About.vue";
 
 const routes = [
     { path: "/", component: MainHome },
@@ -16,6 +17,7 @@ const routes = [
     { path: "/coin-problem", component: CoinProblem },
     { path: "/warehouse-problem", component : WarehouseProblem },
     { path: "/supply-chain-problem", component: SupplyChainProblem },
+    { path: "/about", component: About },
 ]
 
 

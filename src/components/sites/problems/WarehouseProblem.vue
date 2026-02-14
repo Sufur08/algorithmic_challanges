@@ -160,7 +160,7 @@ const showMoreSolutions = ref(false)
 
 .warehouse {
     padding-inline: 12%;
-    padding-block-end: 18dvh;
+    padding-block-end: 8dvh;
 
     display: flex;
     flex-direction: column;
